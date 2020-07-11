@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -24,6 +25,9 @@ import in.menukart.menukart.R;
 import in.menukart.menukart.api.ApiClient;
 import in.menukart.menukart.entities.setting.ResponseSuccess;
 import in.menukart.menukart.presenter.foodcart.signup.SignUpPresenterImp;
+import in.menukart.menukart.util.AppConstants;
+import in.menukart.menukart.view.foodcart.otpverification.PhoneVerificationActivity;
+import in.menukart.menukart.view.foodcart.trackorder.OrderSummaryActivity;
 
 public class SignUpActivity extends AppCompatActivity implements SignUpView {
 
@@ -31,12 +35,16 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView {
     private AppCompatEditText editFirstName, editLastName,
             editEmail, editMobileNumber, editBirthDate, editPassword;
     private Context context;
+    private SharedPreferences sharedPreferences;
     private int mYear, mMonth, mDay;
+    private String mStoredMobileNumber;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_sign_up);
+        sharedPreferences = getSharedPreferences(AppConstants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
+        mStoredMobileNumber = sharedPreferences.getString(AppConstants.USER_MOBILE_NUMBER, "");
         context = SignUpActivity.this;
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -52,6 +60,7 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView {
         editBirthDate = findViewById(R.id.et_sign_up_birth_date);
         editPassword = findViewById(R.id.et_sign_up_password);
         btnSignUp = findViewById(R.id.btn_sign_up);
+        editMobileNumber.setText(mStoredMobileNumber);
         editBirthDate.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -84,12 +93,12 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView {
                     new SignUpPresenterImp(this,
                             new ApiClient(SignUpActivity.this));
             Map<String, String> params = new HashMap<String, String>();
-            params.put("mobileno", editMobileNumber.getText().toString());
+            params.put("mobileno", mStoredMobileNumber);
             params.put("fname", editFirstName.getText().toString());
             params.put("lname", editLastName.getText().toString());
             params.put("email", editEmail.getText().toString());
             params.put("birthdate", editBirthDate.getText().toString());
-            params.put("password", editPassword.getText().toString());
+           // params.put("password", editPassword.getText().toString());
 
             String string = params.toString();
             Log.d("TAG", string);
@@ -159,13 +168,13 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView {
         } else {
             editBirthDate.setError(null);
         }
-        if (editPassword.getText().toString().isEmpty()) {
+       /* if (editPassword.getText().toString().isEmpty()) {
             editPassword.setError("Enter Password!");
             editPassword.requestFocus();
             return false;
         } else {
             editPassword.setError(null);
-        }
+        }*/
 
         return true;
     }
@@ -196,10 +205,9 @@ public class SignUpActivity extends AppCompatActivity implements SignUpView {
         ApiClient.hideProgressBar();
         if ("200".equalsIgnoreCase(responseSuccess.getStatus())) {
             Toast.makeText(context, responseSuccess.getMessage(), Toast.LENGTH_SHORT).show();
-            Intent intentLogin = new Intent(SignUpActivity.this, LoginActivity.class);
-            startActivity(intentLogin);
+            Intent intentOrderSummary = new Intent(SignUpActivity.this, OrderSummaryActivity.class);
+            startActivity(intentOrderSummary);
             this.finish();
-
         }
     }
 }

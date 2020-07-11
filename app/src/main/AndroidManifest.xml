@@ -83,6 +83,7 @@
         <activity
             android:name=".view.foodcart.signup.LoginActivity"
             android:label="@string/title_activity_login"
+            android:resizeableActivity="true"
             android:screenOrientation="portrait" />
         <activity
             android:name=".view.foodcart.otpverification.PhoneVerificationActivity"

@@ -78,6 +78,7 @@ public class PhoneVerificationActivity extends AppCompatActivity implements Veri
 
             }
         });
+
         textResendCode.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -147,17 +148,18 @@ public class PhoneVerificationActivity extends AppCompatActivity implements Veri
         ApiClient.hideProgressBar();
         SharedPreferences sharedPreferences = getSharedPreferences(AppConstants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
+        editor.putString(AppConstants.USER_MOBILE_NUMBER, userMobileNumber);
+        editor.apply();
+        // TODO need to optimization of this code
         if (verifyOtp.getUserdetails() != null) {
             Intent intentOrderSummary = new Intent(PhoneVerificationActivity.this, OrderSummaryActivity.class);
             startActivity(intentOrderSummary);
             finish();
-
             Gson gson = new Gson();
             String json = gson.toJson(verifyOtp.getUserdetails());
             editor.putString(AppConstants.USER_DETAILS, json);
             //  editor.putString(AppConstants.USER_ID, verifyOtp.getUserdetails().getUser_id());
             editor.apply();
-
 
         } else {
             // editor.clear();
