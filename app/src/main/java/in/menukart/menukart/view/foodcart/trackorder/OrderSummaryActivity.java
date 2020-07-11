@@ -223,9 +223,11 @@ public class OrderSummaryActivity extends AppCompatActivity implements OnMapRead
     private void callPaymentGateway(String taxId) {
         //key|txnid|amount|productinfo|firstname|email_id|udf1|udf2|udf3|udf4|udf5||||||salt|key
         double amount = Double.parseDouble(foodCart.getCartSubTotal());
+
         String hashSequence = "N7Q2112ME8|" + taxId + "|" + amount +
-                "|" + restaurant.getRestaurant_name() + "|" + userDetails.getFname() +
+                "|" + restaurant.getRestaurant_name() + "|"+userDetails.getFname().trim()+
                 "|" + userDetails.getEmail() + "|udf1|udf2|udf3|udf4|udf5||||||4ACE76HEX3|N7Q2112ME8";
+
         get_SHA_512_SecurePassword(hashSequence);
 
 

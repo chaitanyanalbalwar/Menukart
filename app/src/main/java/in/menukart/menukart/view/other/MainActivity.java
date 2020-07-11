@@ -175,7 +175,7 @@ public class MainActivity extends AppCompatActivity {
             String postalCode = addresses.get(0).getPostalCode();
             String knownName = addresses.get(0).getFeatureName();
             // Toast.makeText(MapsActivity.this,address,Toast.LENGTH_SHORT).show();
-            tvLocationName.setText(city);
+            tvLocationName.setText(address);
             SharedPreferences sharedPreferences = getSharedPreferences(AppConstants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
             SharedPreferences.Editor editor = sharedPreferences.edit();
             editor.putString(AppConstants.USER_CURRENT_ADDRESS, address);
