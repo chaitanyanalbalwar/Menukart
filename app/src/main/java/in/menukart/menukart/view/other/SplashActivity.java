@@ -19,8 +19,6 @@ public class SplashActivity extends AppCompatActivity {
             getSupportActionBar().hide();
         }
         new Handler().postDelayed(new Runnable() {
-
-
             @Override
             public void run() {
                 // This method will be executed once the timer is over
@@ -28,6 +26,6 @@ public class SplashActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
-        }, 1500);
+        }, 800);
     }
 }

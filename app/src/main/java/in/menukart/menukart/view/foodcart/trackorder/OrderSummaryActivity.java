@@ -69,6 +69,8 @@ import in.menukart.menukart.view.setting.manageaddress.ManageAddressActivity;
 public class OrderSummaryActivity extends AppCompatActivity implements OnMapReadyCallback, SaveOrderView {
 
     private static final int LOCATION_PERMISSION_REQUEST_CODE = 101;
+    private static final String  MERCHANT_KEY = "V5NL6J8PGO";
+    private static final String MERCHANT_SALT = "E3DQXG7Q9X";
     private static String hashSHA512;
     AppCompatTextView textFromSummaryAddress, textToSummaryAddress;
     SharedPreferences sharedPreferences;
@@ -163,25 +165,47 @@ public class OrderSummaryActivity extends AppCompatActivity implements OnMapRead
             @Override
             public void onClick(View view) {
                 int selectedRadioButtonID = rgPaymentGroup.getCheckedRadioButtonId();
-                if (ApiClient.isConnectedToInternet(context)) {
+                if(selectedRadioButtonID != -1){
+                    RadioButton selectedRadioButton = (RadioButton) findViewById(selectedRadioButtonID);
+                    selectedPaymentOption = selectedRadioButton.getText().toString();
+                    if(ApiClient.isConnectedToInternet(context)){
+                        if(selectedPaymentOption.equalsIgnoreCase(getResources()
+                                .getString(R.string.text_payment_cash))){
+                            // Call cash on delivery
+                            callOrderComplete();
+                        }else if(selectedPaymentOption.equalsIgnoreCase(getResources()
+                                .getString(R.string.text_pay_online))){
+                            // Call payment gateway
+                            Random rand = new Random();
+                            int randomNumber = rand.nextInt(100);
+                            taxId = String.valueOf(randomNumber);
+                            btnCompleteOrder.setVisibility(View.INVISIBLE);
+                            callPaymentGateway(taxId);
+                        }
+                    }else {
+                        ApiClient.openAlertDialogWithPositive(context, getString(R.string.error_check_network),
+                                getString(R.string.dialog_label_ok));
+                    }
+                }else {
+                    Toast.makeText(OrderSummaryActivity.this, "Please Select Payment Option", Toast.LENGTH_SHORT).show();
+                }
+              /*  if (ApiClient.isConnectedToInternet(context)) {
                     // If nothing is selected from Radio Group, then it return -1
                     if (selectedRadioButtonID != -1) {
-
                         RadioButton selectedRadioButton = (RadioButton) findViewById(selectedRadioButtonID);
                         selectedPaymentOption = selectedRadioButton.getText().toString();
                         callOrderComplete();
+
                     } else {
                         Toast.makeText(OrderSummaryActivity.this, "Please Select Payment Option", Toast.LENGTH_SHORT).show();
                     }
-
-
                 } else {
                     ApiClient.openAlertDialogWithPositive(context, getString(R.string.error_check_network),
                             getString(R.string.dialog_label_ok));
-                }
+                }*/
             }
         });
-        Random rand = new Random();
+     /*   Random rand = new Random();
         int randomNumber = rand.nextInt(100);
         taxId = String.valueOf(randomNumber);
         rbOnlinePay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
@@ -191,9 +215,8 @@ public class OrderSummaryActivity extends AppCompatActivity implements OnMapRead
                     btnCompleteOrder.setVisibility(View.INVISIBLE);
                     callPaymentGateway(taxId);
                 }
-
             }
-        });
+        });*/
        /* rgPaymentGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
             @Override
             public void onCheckedChanged(RadioGroup radioGroup, int checkId) {
@@ -224,9 +247,9 @@ public class OrderSummaryActivity extends AppCompatActivity implements OnMapRead
         //key|txnid|amount|productinfo|firstname|email_id|udf1|udf2|udf3|udf4|udf5||||||salt|key
         double amount = Double.parseDouble(foodCart.getCartSubTotal());
 
-        String hashSequence = "N7Q2112ME8|" + taxId + "|" + amount +
+        String hashSequence = "V5NL6J8PGO|" + taxId + "|" + amount +
                 "|" + restaurant.getRestaurant_name() + "|"+userDetails.getFname().trim()+
-                "|" + userDetails.getEmail() + "|udf1|udf2|udf3|udf4|udf5||||||4ACE76HEX3|N7Q2112ME8";
+                "|" + userDetails.getEmail() + "|udf1|udf2|udf3|udf4|udf5||||||E3DQXG7Q9X|V5NL6J8PGO";
 
         get_SHA_512_SecurePassword(hashSequence);
 
@@ -239,7 +262,8 @@ public class OrderSummaryActivity extends AppCompatActivity implements OnMapRead
         intentProceed.putExtra("firstname", userDetails.getFname());
         intentProceed.putExtra("email", userDetails.getEmail());
         intentProceed.putExtra("phone", userDetails.getMobileno());
-        intentProceed.putExtra("key", "N7Q2112ME8");
+        intentProceed.putExtra("key", MERCHANT_KEY);
+        intentProceed.putExtra("salt", MERCHANT_SALT);
         intentProceed.putExtra("udf1", "udf1");
         intentProceed.putExtra("udf2", "udf2");
         intentProceed.putExtra("udf3", "udf3");
@@ -253,7 +277,7 @@ public class OrderSummaryActivity extends AppCompatActivity implements OnMapRead
         intentProceed.putExtra("zipcode", "Zipcode");*/
         intentProceed.putExtra("hash", hashSHA512);
         intentProceed.putExtra("unique_id", userDetails.getUser_id());
-        intentProceed.putExtra("pay_mode", "test");
+        intentProceed.putExtra("pay_mode", "production");
        /* intentProceed.putExtra("sub_merchant_id", "Pass sub merchant " +
                 "id If you are using a Sub-Aggregator feature . " +
                 "Do not pass this parameter if the Sub-Aggregator " +
@@ -264,9 +288,8 @@ public class OrderSummaryActivity extends AppCompatActivity implements OnMapRead
     private void callOrderComplete() {
         ApiClient.showProgressBar(OrderSummaryActivity.this);
         try {
-            SaveOrderPresenterImp saveOrderPresenterImp =
-                    new SaveOrderPresenterImp(this,
-                            new ApiClient(OrderSummaryActivity.this));
+            SaveOrderPresenterImp saveOrderPresenterImp = new SaveOrderPresenterImp(this,
+                    new ApiClient(OrderSummaryActivity.this));
             Map<String, String> params = new HashMap<String, String>();
             ArrayList<JSONObject> list = new ArrayList<JSONObject>();
 
@@ -463,11 +486,7 @@ public class OrderSummaryActivity extends AppCompatActivity implements OnMapRead
             editor.putString(AppConstants.ORDER_ID, saveOrder.getOrder_id());
             editor.putString(AppConstants.ORDER_STATUS, saveOrder.getStatus());
             editor.apply();
-
-
         }
-
-
     }
 
     @Override
@@ -487,6 +506,7 @@ public class OrderSummaryActivity extends AppCompatActivity implements OnMapRead
                     if ("payment_successfull".equals(result)) {
                         Toast.makeText(OrderSummaryActivity.this, result, Toast.LENGTH_SHORT).show();
                         btnCompleteOrder.setVisibility(View.VISIBLE);
+                        callOrderComplete();
                     } else {
                         Toast.makeText(OrderSummaryActivity.this, result, Toast.LENGTH_SHORT).show();
                         btnCompleteOrder.setVisibility(View.INVISIBLE);
@@ -499,5 +519,4 @@ public class OrderSummaryActivity extends AppCompatActivity implements OnMapRead
             }
         }
     }
-
 }

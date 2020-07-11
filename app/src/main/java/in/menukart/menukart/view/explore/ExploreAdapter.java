@@ -138,8 +138,6 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
             textRestaurantType = itemView.findViewById(R.id.tv_restaurant_type);
             textDeliveryTime = itemView.findViewById(R.id.tv_delivery_time);
 
-
         }
     }
-
 }

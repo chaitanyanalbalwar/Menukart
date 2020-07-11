@@ -22,6 +22,7 @@
             android:drawablePadding="4dp"
             android:layout_gravity="start"
             android:text=""
+            android:marqueeRepeatLimit="marquee_forever"
             android:textColor="@android:color/white"
             android:textSize="@dimen/text_large" />
 

@@ -8,6 +8,7 @@ import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
 import android.os.Bundle;
+import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
@@ -68,8 +69,13 @@ public class MainActivity extends AppCompatActivity {
     private void setCustomToolbar() {
         toolbarHome = findViewById(R.id.toolbar_home);
         setSupportActionBar(toolbarHome);
+
         toolbarTitle = toolbarHome.findViewById(R.id.tv_toolbar_title);
         tvLocationName = toolbarHome.findViewById(R.id.tv_location_name);
+        tvLocationName.setEllipsize(TextUtils.TruncateAt.MARQUEE);
+        tvLocationName.setSelected(true);
+        tvLocationName.setSingleLine(true);
+
         sharedPreferences = getSharedPreferences(AppConstants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
         Gson gson = new Gson();
         String json = sharedPreferences.getString(AppConstants.USER_DETAILS, null);
