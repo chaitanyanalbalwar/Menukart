@@ -189,51 +189,9 @@ public class OrderSummaryActivity extends AppCompatActivity implements OnMapRead
                 }else {
                     Toast.makeText(OrderSummaryActivity.this, "Please Select Payment Option", Toast.LENGTH_SHORT).show();
                 }
-              /*  if (ApiClient.isConnectedToInternet(context)) {
-                    // If nothing is selected from Radio Group, then it return -1
-                    if (selectedRadioButtonID != -1) {
-                        RadioButton selectedRadioButton = (RadioButton) findViewById(selectedRadioButtonID);
-                        selectedPaymentOption = selectedRadioButton.getText().toString();
-                        callOrderComplete();
-
-                    } else {
-                        Toast.makeText(OrderSummaryActivity.this, "Please Select Payment Option", Toast.LENGTH_SHORT).show();
-                    }
-                } else {
-                    ApiClient.openAlertDialogWithPositive(context, getString(R.string.error_check_network),
-                            getString(R.string.dialog_label_ok));
-                }*/
             }
         });
-     /*   Random rand = new Random();
-        int randomNumber = rand.nextInt(100);
-        taxId = String.valueOf(randomNumber);
-        rbOnlinePay.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
-                if (b) {
-                    btnCompleteOrder.setVisibility(View.INVISIBLE);
-                    callPaymentGateway(taxId);
-                }
-            }
-        });*/
-       /* rgPaymentGroup.setOnCheckedChangeListener(new RadioGroup.OnCheckedChangeListener() {
-            @Override
-            public void onCheckedChanged(RadioGroup radioGroup, int checkId) {
-                if (checkId == R.id.rb_pay_online)
-                {
-                    callPaymentGateway();
-                }
-               *//* switch (checkId) {
-                    case R.id.rb_pay_online:
-                        callPaymentGateway();
-                        break;
-                    default:
-                        break;
-                }*//*
 
-            }
-        });*/
         btnChangeLocation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
