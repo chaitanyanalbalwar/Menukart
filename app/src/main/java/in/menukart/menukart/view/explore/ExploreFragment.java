@@ -75,8 +75,7 @@ public class ExploreFragment extends Fragment implements RestaurantListView {
 
     }
 
-    private void setVegOnlyFilter()
-    {
+    private void setVegOnlyFilter() {
     }
 
     private void setSearchFilter() {
