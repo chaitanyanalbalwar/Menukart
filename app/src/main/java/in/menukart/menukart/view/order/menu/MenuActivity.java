@@ -48,6 +48,8 @@ public class MenuActivity extends AppCompatActivity implements MenuView {
     LinearLayout llCart;
     AppCompatTextView textCartItems, textCartValue;
     private String TAG = "MenuActivity";
+    private CategoryAdapter categoryAdapter;
+    private MenuAdapter menuAdapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +64,12 @@ public class MenuActivity extends AppCompatActivity implements MenuView {
         }
 
         initMenuViews();
+
+        categoryAdapter = new CategoryAdapter(new ArrayList<Category>(), context);
+        rcvCategory.setAdapter(categoryAdapter);
+
+        menuAdapter = new MenuAdapter(new ArrayList<RestaurantMenu>(), context);
+        rcvMenu.setAdapter(menuAdapter);
     }
 
     private void initMenuViews() {
@@ -116,15 +124,11 @@ public class MenuActivity extends AppCompatActivity implements MenuView {
     public void onSuccessfulMenuList(Menu menu) {
         ApiClient.hideProgressBar();
         if (menu.getData().getCategories() != null) {
-            CategoryAdapter categoryAdapter = new CategoryAdapter(menu.getData().getCategories(), context);
-            rcvCategory.setAdapter(categoryAdapter);
-            categoryAdapter.notifyDataSetChanged();
+            categoryAdapter.updateList(menu.getData().getCategories());
         }
 
         if (menu.getData().getMenus() != null) {
-            MenuAdapter menuAdapter = new MenuAdapter(menu.getData().getMenus(), context);
-            rcvMenu.setAdapter(menuAdapter);
-            menuAdapter.notifyDataSetChanged();
+            menuAdapter.updateList(menu.getData().getMenus());
         }
         restaurantMenus.addAll(menu.getData().getMenus());
 
@@ -138,11 +142,7 @@ public class MenuActivity extends AppCompatActivity implements MenuView {
 
             }
         }
-        MenuAdapter menuAdapter = new MenuAdapter(filteredMenus, context);
-        rcvMenu.setAdapter(menuAdapter);
-        menuAdapter.notifyDataSetChanged();
-
-
+        menuAdapter.updateList(filteredMenus);
     }
 
     @SuppressLint("SetTextI18n")
@@ -166,19 +166,13 @@ public class MenuActivity extends AppCompatActivity implements MenuView {
                         Intent intentFoodCart = new Intent(MenuActivity.this, FoodCartActivity.class);
                         intentFoodCart.putExtra("selectedMenus", (Serializable) restaurantMenuList);
                         startActivity(intentFoodCart);
-
                     }
                 });
-
 
             } else {
                 llCart.setVisibility(View.GONE);
             }
-
-
         }
-
-
     }
 
     public int getTotal(List<RestaurantMenu> list) {

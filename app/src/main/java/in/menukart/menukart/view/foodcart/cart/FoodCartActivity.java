@@ -42,6 +42,7 @@ public class FoodCartActivity extends AppCompatActivity {
     double gst = 5.0;
     String menuAddedQty = "1";
     String menuRemovedQty = "1";
+    private FoodCartAdapter foodCartAdapter;
 
     @SuppressWarnings("unchecked")
     @Override
@@ -55,14 +56,14 @@ public class FoodCartActivity extends AppCompatActivity {
         restaurantMenuList = (List<RestaurantMenu>) getIntent().
                 getSerializableExtra("selectedMenus");
 
-        initFoodCartViews();
+        initCartViews();
+        loadCartViews();
         foodCartItemsData();
 
 
     }
 
-    @SuppressLint("SetTextI18n")
-    private void initFoodCartViews() {
+    private void initCartViews() {
         editPromoCode = findViewById(R.id.et_food_promo_code);
         textFoodCartTotal = findViewById(R.id.tv_food_cart_total);
         textFoodTax = findViewById(R.id.tv_food_cart_tax);
@@ -71,7 +72,11 @@ public class FoodCartActivity extends AppCompatActivity {
         textSubTotal = findViewById(R.id.tv_food_cart_sub_total);
         btnApplyPromo = findViewById(R.id.btn_promo_code_apply);
         btnProceedToCheckout = findViewById(R.id.btn_proceed_to_checkout);
+    }
 
+    @SuppressLint("SetTextI18n")
+    private void loadCartViews() {
+        total = 0;
         if (restaurantMenuList != null) {
             for (int i = 0; i < restaurantMenuList.size(); i++) {
                 total = total + Double.parseDouble(restaurantMenuList.get(i).getMenu_price());
@@ -122,8 +127,6 @@ public class FoodCartActivity extends AppCompatActivity {
                 finish();
             }
         });
-
-
     }
 
     private void foodCartItemsData() {
@@ -134,10 +137,9 @@ public class FoodCartActivity extends AppCompatActivity {
         rcvFoodCart.setLayoutManager(linearLayoutManager);
         rcvFoodCart.setHasFixedSize(true);
 
-        FoodCartAdapter foodCartAdapter = new FoodCartAdapter(restaurantMenuList, context);
+        foodCartAdapter = new FoodCartAdapter(restaurantMenuList, context);
         rcvFoodCart.setAdapter(foodCartAdapter);
         foodCartAdapter.notifyDataSetChanged();
-
 
     }
 
@@ -203,5 +205,12 @@ public class FoodCartActivity extends AppCompatActivity {
         return super.onOptionsItemSelected(item);
     }
 
-
+    public void updateInvoice(List<RestaurantMenu> restaurantMenus){
+        this.restaurantMenuList = restaurantMenus;
+        loadCartViews();
+        if(total == 0){
+            btnProceedToCheckout.setEnabled(false);
+            btnProceedToCheckout.setBackgroundColor(getResources().getColor(R.color.colorGray));
+        }
+    }
 }

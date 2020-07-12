@@ -43,8 +43,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.CategoryViewHo
         String imgUrl = "http://admin.menukart.online/uploads/menu/" + restaurantMenus.get(position).getMenu_logo();
 
 
-        Glide
-                .with(context)
+        Glide.with(context)
                 .load(imgUrl)
                 .centerCrop()
                 // .placeholder(R.drawable.ic_loader_food)
@@ -67,35 +66,10 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.CategoryViewHo
                     holder.btnAddMenu.setBackgroundDrawable(context.
                             getResources().getDrawable(R.drawable.bg_rounded_gray_button));
 
-
                 }
             }
         });
-       /* if (checkValue) {
-            holder.btnAddMenu.setClickable(false);
-            holder.btnAddMenu.setBackgroundColor(context.getResources().getColor(R.color.colorGray));
-        }*/
 
-
-       /* holder.textAdd.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int addCount = Integer.parseInt(holder.textMenuCount.getText().toString());
-                addCount++;
-                holder.textMenuCount.setText(String.valueOf(addCount));
-
-            }
-        });
-        holder.textRemove.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                int removeCount = Integer.parseInt(holder.textMenuCount.getText().toString());
-                removeCount--;
-                holder.textMenuCount.setText(String.valueOf(removeCount));
-
-            }
-        });
-*/
     }
 
     @Override
@@ -117,12 +91,11 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.CategoryViewHo
             textMenuVegNonVeg = view.findViewById(R.id.tv_menu_veg_non_veg);
             textMenuCost = view.findViewById(R.id.tv_menu_cost);
             btnAddMenu = view.findViewById(R.id.btn_menu_add);
-             /*btnAddMenu.setVisibility(View.VISIBLE);
-            rlMenuAddRemoveItem = view.findViewById(R.id.rl_menu_add_remove_item);
-            rlMenuAddRemoveItem.setVisibility(View.GONE);
-            textAdd = view.findViewById(R.id.tv_menu_add);
-            textMenuCount = view.findViewById(R.id.tv_menu_item_count);
-            textRemove = view.findViewById(R.id.tv_menu_remove);*/
         }
+    }
+
+    public void updateList(List<RestaurantMenu> restaurantMenus){
+        this.restaurantMenus = restaurantMenus;
+        notifyDataSetChanged();
     }
 }

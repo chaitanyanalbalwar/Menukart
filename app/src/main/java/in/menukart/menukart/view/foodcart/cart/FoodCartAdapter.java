@@ -43,8 +43,7 @@ public class FoodCartAdapter extends RecyclerView.Adapter<FoodCartAdapter.FoodCa
         String imgUrl = "http://admin.menukart.online/uploads/menu/" + restaurantFoodCartMenus.get(position).getMenu_logo();
 
 
-        Glide
-                .with(context)
+        Glide.with(context)
                 .load(imgUrl)
                 .centerCrop()
                 // .placeholder(R.drawable.ic_loader_food)
@@ -68,6 +67,7 @@ public class FoodCartAdapter extends RecyclerView.Adapter<FoodCartAdapter.FoodCa
 
             }
         });
+
         holder.textRemoveFoodCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -87,11 +87,15 @@ public class FoodCartAdapter extends RecyclerView.Adapter<FoodCartAdapter.FoodCa
 
             }
         });
+
         holder.imgFoodCartClose.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 removeAt(position);
-
+                if (context instanceof FoodCartActivity) {
+                    ((FoodCartActivity) context)
+                            .updateInvoice(restaurantFoodCartMenus);
+                }
             }
         });
 
@@ -126,4 +130,8 @@ public class FoodCartAdapter extends RecyclerView.Adapter<FoodCartAdapter.FoodCa
             textRemoveFoodCart = view.findViewById(R.id.tv_food_cart_remove);
         }
     }
+
+   public List<RestaurantMenu> getUpdatedList(){
+        return restaurantFoodCartMenus;
+   }
 }
