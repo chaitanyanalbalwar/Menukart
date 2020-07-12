@@ -62,6 +62,9 @@ public class PhoneVerificationActivity extends AppCompatActivity implements Veri
         textCodeDetails = findViewById(R.id.tv_code_details);
         textResendCode = findViewById(R.id.tv_resend_code);
         textCodeDetails.setText("A Verification code is sent to your number " + userMobileNumber);
+
+        editOtp.requestFocus();
+
         btnVerifyOtp.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

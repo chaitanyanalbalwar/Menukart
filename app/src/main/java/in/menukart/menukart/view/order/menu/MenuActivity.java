@@ -153,7 +153,11 @@ public class MenuActivity extends AppCompatActivity implements MenuView {
             restaurantMenuList.add(restaurantMenu);
             if (restaurantMenuList != null) {
                 llCart.setVisibility(View.VISIBLE);
+
                 textCartItems.setText("Go To Cart " + "(" + restaurantMenuList.size() + " items added)");
+                textCartItems.setSingleLine();
+                textCartItems.setTextSize(12);
+
                 int total = 0;
                 for (int i = 0; i < restaurantMenuList.size(); i++) {
                     total = total + Integer.parseInt(restaurantMenuList.get(i).getMenu_price());
