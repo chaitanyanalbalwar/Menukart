@@ -467,12 +467,8 @@ public class OrderSummaryActivity extends AppCompatActivity implements OnMapRead
                         callOrderComplete();
                     } else {
                         Toast.makeText(OrderSummaryActivity.this, result, Toast.LENGTH_SHORT).show();
-                        btnCompleteOrder.setVisibility(View.INVISIBLE);
                     }
-
-// Handle response here
                 } catch (Exception e) {
-// Handle exception here
                 }
             }
         }
