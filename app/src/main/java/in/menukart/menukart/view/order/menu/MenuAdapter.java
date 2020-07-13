@@ -52,6 +52,15 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.CategoryViewHo
         holder.textMenuName.setText(restaurantMenus.get(position).getMenu_name());
         holder.textMenuVegNonVeg.setText(restaurantMenus.get(position).getMenu_foodtype());
         holder.textMenuCost.setText("\u20B9 " + restaurantMenus.get(position).getMenu_price());
+
+        if(restaurantMenus.get(position).isAddedToCart()){
+            holder.btnAddMenu.setClickable(false);
+            holder.btnAddMenu.setText("Added");
+            holder.btnAddMenu.setTextColor(context.getResources().getColor(R.color.colorGray));
+            holder.btnAddMenu.setBackgroundDrawable(context.
+                    getResources().getDrawable(R.drawable.bg_rounded_gray_button));
+        }
+
         holder.btnAddMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -65,11 +74,10 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.CategoryViewHo
                   //  holder.btnAddMenu.setBackgroundColor(context.getResources().getColor(R.color.colorGray));
                     holder.btnAddMenu.setBackgroundDrawable(context.
                             getResources().getDrawable(R.drawable.bg_rounded_gray_button));
-
+                    restaurantMenus.get(position).setIsAdded(true);
                 }
             }
         });
-
     }
 
     @Override

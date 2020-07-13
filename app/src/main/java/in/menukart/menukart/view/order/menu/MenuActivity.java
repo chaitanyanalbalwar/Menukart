@@ -35,6 +35,7 @@ import in.menukart.menukart.entities.order.Menu;
 import in.menukart.menukart.entities.order.RestaurantMenu;
 import in.menukart.menukart.presenter.order.menu.MenuPresenterImp;
 import in.menukart.menukart.util.AppConstants;
+import in.menukart.menukart.view.order.OrderRecord;
 
 public class MenuActivity extends AppCompatActivity implements MenuView {
     MenuPresenterImp menuPresenterImp;
@@ -75,7 +76,8 @@ public class MenuActivity extends AppCompatActivity implements MenuView {
     private void initMenuViews() {
         menuPresenterImp = new MenuPresenterImp(this,
                 new ApiClient(context));
-        restaurantMenuList = new ArrayList<>();
+        //restaurantMenuList = new ArrayList<>();
+
         llCart = findViewById(R.id.ll_cart_items);
         textCartItems = findViewById(R.id.tv_cart_items);
         textCartValue = findViewById(R.id.tv_items_total_value);
@@ -152,31 +154,34 @@ public class MenuActivity extends AppCompatActivity implements MenuView {
             textCartValue.setText("\u20B9 " + restaurantMenu.getMenu_price());
             restaurantMenuList.add(restaurantMenu);
             if (restaurantMenuList != null) {
-                llCart.setVisibility(View.VISIBLE);
-
-                textCartItems.setText("Go To Cart " + "(" + restaurantMenuList.size() + " items added)");
-                textCartItems.setSingleLine();
-                textCartItems.setTextSize(12);
-
-                int total = 0;
-                for (int i = 0; i < restaurantMenuList.size(); i++) {
-                    total = total + Integer.parseInt(restaurantMenuList.get(i).getMenu_price());
-                }
-                textCartValue.setText("\u20B9 " + String.valueOf(total));
-
-                llCart.setOnClickListener(new View.OnClickListener() {
-                    @Override
-                    public void onClick(View view) {
-                        Intent intentFoodCart = new Intent(MenuActivity.this, FoodCartActivity.class);
-                        intentFoodCart.putExtra("selectedMenus", (Serializable) restaurantMenuList);
-                        startActivity(intentFoodCart);
-                    }
-                });
-
+                showItemCart();
             } else {
                 llCart.setVisibility(View.GONE);
             }
         }
+    }
+
+    private void showItemCart() {
+        llCart.setVisibility(View.VISIBLE);
+
+        textCartItems.setText("Go To Cart " + "(" + restaurantMenuList.size() + " items added)");
+        textCartItems.setSingleLine();
+        textCartItems.setTextSize(12);
+
+        int total = 0;
+        for (int i = 0; i < restaurantMenuList.size(); i++) {
+            total = total + Integer.parseInt(restaurantMenuList.get(i).getMenu_price());
+        }
+        textCartValue.setText("\u20B9 " + String.valueOf(total));
+
+        llCart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intentFoodCart = new Intent(MenuActivity.this, FoodCartActivity.class);
+                intentFoodCart.putExtra("selectedMenus", (Serializable) restaurantMenuList);
+                startActivity(intentFoodCart);
+            }
+        });
     }
 
     public int getTotal(List<RestaurantMenu> list) {
@@ -210,5 +215,16 @@ public class MenuActivity extends AppCompatActivity implements MenuView {
     public void onBackPressed() {
         super.onBackPressed();
         this.finish();
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        restaurantMenuList = OrderRecord.getOrderList();
+        if(restaurantMenuList.size() > 0){
+            showItemCart();
+        }else {
+            llCart.setVisibility(View.GONE);
+        }
     }
 }

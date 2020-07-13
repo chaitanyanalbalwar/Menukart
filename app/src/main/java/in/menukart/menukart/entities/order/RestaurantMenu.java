@@ -16,6 +16,7 @@ public class RestaurantMenu implements Serializable {
     private String menu_shortcode;
     private List<Variation> variation;
     private String menu_description;
+    private boolean isAddedToCart;
 
     public String getMenu_foodtype() {
         return menu_foodtype;
@@ -117,5 +118,11 @@ public class RestaurantMenu implements Serializable {
 
     }
 
+    public void setIsAdded(boolean isAdded){
+        isAddedToCart = isAdded;
+    }
 
+    public boolean isAddedToCart(){
+        return isAddedToCart;
+    }
 }

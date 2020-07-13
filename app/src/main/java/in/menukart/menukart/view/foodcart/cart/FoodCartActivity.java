@@ -26,6 +26,7 @@ import in.menukart.menukart.entities.foodcart.FoodCart;
 import in.menukart.menukart.entities.order.RestaurantMenu;
 import in.menukart.menukart.util.AppConstants;
 import in.menukart.menukart.view.foodcart.signup.LoginActivity;
+import in.menukart.menukart.view.order.OrderRecord;
 
 public class FoodCartActivity extends AppCompatActivity {
 
@@ -207,6 +208,7 @@ public class FoodCartActivity extends AppCompatActivity {
 
     public void updateInvoice(List<RestaurantMenu> restaurantMenus){
         this.restaurantMenuList = restaurantMenus;
+        OrderRecord.restaurantMenus = restaurantMenus;
         loadCartViews();
         if(total == 0){
             btnProceedToCheckout.setEnabled(false);
