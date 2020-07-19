@@ -153,7 +153,7 @@ public class OrderSummaryActivity extends AppCompatActivity implements OnMapRead
         rbOnlinePay = findViewById(R.id.rb_pay_online);
         btnCompleteOrder = findViewById(R.id.btn_complete_order);
         btnChangeLocation = findViewById(R.id.btn_change_location);
-        textFromSummaryAddress.setText(restaurant.getRestaurant_address());
+        textFromSummaryAddress.setText(restaurant == null? "" :restaurant.getRestaurant_address());
         textToSummaryAddress.setText(userCurrentAddress);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.

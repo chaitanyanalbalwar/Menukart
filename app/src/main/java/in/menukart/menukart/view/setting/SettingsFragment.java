@@ -25,6 +25,7 @@ import com.google.gson.Gson;
 import in.menukart.menukart.R;
 import in.menukart.menukart.entities.foodcart.UserDetails;
 import in.menukart.menukart.util.AppConstants;
+import in.menukart.menukart.view.foodcart.signup.LoginActivity;
 import in.menukart.menukart.view.other.MainActivity;
 import in.menukart.menukart.view.setting.manageaddress.ManageAddressActivity;
 import in.menukart.menukart.view.setting.privacypolicy.PrivacyActivity;
@@ -36,7 +37,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             rlPrivacyPolicy, rlCancellationPolicy,
             rlHelpSupport, rlLogOut;
     AppCompatImageView imgUpdateProfile;
-    AppCompatTextView textProfileName, textProfileEmail, textProfileContact, textLoginFirst;
+    AppCompatTextView textProfileName, textProfileEmail, textProfileContact, textLoginFirst, txtClickToLogin;
     View root;
     UserDetails userDetails;
     Context context;
@@ -59,6 +60,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         textProfileName = root.findViewById(R.id.tv_profile_name);
         textProfileEmail = root.findViewById(R.id.tv_profile_email);
         textProfileContact = root.findViewById(R.id.tv_profile_contact);
+        txtClickToLogin = root.findViewById(R.id.tv_login_first);
 
         rlManageAddress = root.findViewById(R.id.rl_manage_address);
         rlTermsConditions = root.findViewById(R.id.rl_terms_conditions);
@@ -75,6 +77,7 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
         rlHelpSupport.setOnClickListener(this);
         rlLogOut.setOnClickListener(this);
         imgUpdateProfile.setOnClickListener(this);
+        txtClickToLogin.setOnClickListener(this);
 
         Gson gson = new Gson();
         SharedPreferences sharedPreferences = context.getSharedPreferences(AppConstants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
@@ -130,6 +133,10 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
             case R.id.iv_update_user_profile:
                 Intent intentUpdateProfile = new Intent(getActivity(), UpdateProfileActivity.class);
                 startActivity(intentUpdateProfile);
+                break;
+            case R.id.tv_login_first:
+                Intent intentLoginScreen = new Intent(getActivity(), LoginActivity.class);
+                startActivity(intentLoginScreen);
                 break;
 
         }

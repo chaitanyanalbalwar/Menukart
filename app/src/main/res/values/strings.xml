@@ -44,7 +44,7 @@
     <string name="hint_address_title">Title</string>
     <string name="hint_address">responseSuccess</string>
     <string name="btn_save_address">Save</string>
-    <string name="text_login_first">Please Login First!</string>
+    <string name="text_login_first">Please click here to Login First!</string>
     <string name="text_ask_for_log_out">Do you want to Logout?</string>
     <string name="text_log_out_yes">Yes</string>
     <string name="text_log_out_no">No</string>
