@@ -33,8 +33,4 @@ public class Menu implements Serializable {
         this.data = data;
     }
 
-
-
-
-
 }

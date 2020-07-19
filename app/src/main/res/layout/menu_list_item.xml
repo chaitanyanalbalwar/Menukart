@@ -80,6 +80,18 @@
                     android:text="@string/btn_add"
                     android:textColor="@color/colorAccent" />
 
+                <com.cepheuen.elegantnumberbutton.view.ElegantNumberButton
+                    android:id="@+id/number_button"
+                    android:layout_width="200dp"
+                    android:layout_below="@+id/tv_menu_cost"
+                    android:layout_alignParentEnd="true"
+                    app:backGroundColor="@color/colorPrimary"
+                    app:textSize="8sp"
+                    android:visibility="invisible"
+                    android:layout_marginTop="24dp"
+                    android:layout_centerHorizontal="true"
+                    android:layout_height="30dp" />
+
                 <RelativeLayout
                     android:id="@+id/rl_menu_add_remove_item"
                     android:layout_width="wrap_content"
