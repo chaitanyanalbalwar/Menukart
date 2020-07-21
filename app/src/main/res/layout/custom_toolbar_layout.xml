@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="wrap_content"
     android:orientation="vertical">
@@ -27,6 +28,7 @@
             android:textSize="@dimen/text_large" />
 
         <androidx.appcompat.widget.AppCompatTextView
+            android:layout_below="@+id/tv_location_name"
             android:id="@+id/tv_food_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -37,6 +39,16 @@
             android:text="@string/food_message"
             android:textColor="@android:color/white"
             android:textSize="@dimen/text_xx_large" />
+
+        <ImageView
+            android:layout_below="@+id/tv_location_name"
+            android:layout_toRightOf="@+id/tv_food_message"
+            android:layout_marginLeft="20dp"
+            android:paddingRight="20dp"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:src="@drawable/cart_icon"
+            android:layout_gravity="right"/>
 
 
         <!-- <RelativeLayout

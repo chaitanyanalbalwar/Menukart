@@ -2,6 +2,7 @@ package in.menukart.menukart.view.explore;
 
 import android.content.Context;
 import android.os.Bundle;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -17,6 +18,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Locale;
 
 import in.menukart.menukart.R;
 import in.menukart.menukart.api.ApiClient;
@@ -31,6 +33,8 @@ public class ExploreFragment extends Fragment implements RestaurantListView {
     SearchView searchViewRestaurant;
     ExploreAdapter exploreAdapter;
   //  SwitchCompat switchCompatVeg;
+
+    TextToSpeech textToSpeech;
 
     View root;
     private String TAG = "MainActivity";
@@ -51,6 +55,8 @@ public class ExploreFragment extends Fragment implements RestaurantListView {
         recyclerViewExplore = root.findViewById(R.id.recycler_view_restaurants);
         searchViewRestaurant = root.findViewById(R.id.search_view_food);
       //  switchCompatVeg = root.findViewById(R.id.switch_veg_only);
+
+
 
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
@@ -82,11 +88,23 @@ public class ExploreFragment extends Fragment implements RestaurantListView {
         // listening to search query text change
         searchViewRestaurant.setOnQueryTextListener(new SearchView.OnQueryTextListener() {
             @Override
-            public boolean onQueryTextSubmit(String query) {
+            public boolean onQueryTextSubmit(final String query) {
                 // filter recycler view when query submitted
                 //  if (restaurantLists.contains(query)) {
                 if (exploreAdapter != null) {
                     exploreAdapter.getFilter().filter(query);
+
+                    textToSpeech=new TextToSpeech(context, new TextToSpeech.OnInitListener() {
+                        @Override
+                        public void onInit(int status) {
+                            if(status != TextToSpeech.ERROR) {
+                                textToSpeech.setLanguage(Locale.UK);
+
+
+                                textToSpeech.speak(query, TextToSpeech.QUEUE_FLUSH, null);
+                            }
+                        }
+                    });
                 }
 
                 return false;
