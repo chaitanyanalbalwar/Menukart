@@ -50,8 +50,8 @@ public class FoodCartAdapter extends RecyclerView.Adapter<FoodCartAdapter.FoodCa
                 .into(holder.imgFoodCart);
 
         holder.textFoodCartName.setText(restaurantMenu.getMenu_name());
-        holder.textFoodCartPrice.setText("\u20B9 " + Double.parseDouble(restaurantMenu.getMenu_price()));
-        holder.textFoodCartCount.setText("1");
+        holder.textFoodCartPrice.setText("\u20B9 " + Double.parseDouble(restaurantMenu.getMenu_price()) * restaurantMenu.getQuantity());
+        holder.textFoodCartCount.setText(""+restaurantMenu.quantity);
         holder.textAddFoodCart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

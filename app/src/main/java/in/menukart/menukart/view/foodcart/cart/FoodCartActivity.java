@@ -19,9 +19,11 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.google.gson.Gson;
 
 import java.text.DecimalFormat;
+import java.util.ArrayList;
 import java.util.List;
 
 import in.menukart.menukart.R;
+import in.menukart.menukart.db.MenuKartDatabase;
 import in.menukart.menukart.entities.foodcart.FoodCart;
 import in.menukart.menukart.entities.order.RestaurantMenu;
 import in.menukart.menukart.util.AppConstants;
@@ -30,7 +32,7 @@ import in.menukart.menukart.view.order.OrderRecord;
 
 public class FoodCartActivity extends AppCompatActivity {
 
-    List<RestaurantMenu> restaurantMenuList;
+    List<RestaurantMenu> restaurantMenuList = new ArrayList<>();
     Context context;
     RecyclerView rcvFoodCart;
     AppCompatEditText editPromoCode;
@@ -54,8 +56,9 @@ public class FoodCartActivity extends AppCompatActivity {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
         context = FoodCartActivity.this;
-        restaurantMenuList = (List<RestaurantMenu>) getIntent().
-                getSerializableExtra("selectedMenus");
+       /* restaurantMenuList = (List<RestaurantMenu>) getIntent().
+                getSerializableExtra("selectedMenus");*/
+        restaurantMenuList = MenuKartDatabase.getDatabase(context).menuKartDao().getAllAddedItems();
 
         initCartViews();
         loadCartViews();
@@ -80,7 +83,7 @@ public class FoodCartActivity extends AppCompatActivity {
         total = 0;
         if (restaurantMenuList != null) {
             for (int i = 0; i < restaurantMenuList.size(); i++) {
-                total = total + Double.parseDouble(restaurantMenuList.get(i).getMenu_price());
+                total = total + Double.parseDouble(restaurantMenuList.get(i).getMenu_price()) * restaurantMenuList.get(i).getQuantity();
             }
             foodCartTotal = String.valueOf(total);
             textFoodCartTotal.setText("\u20B9 " + String.valueOf(total));

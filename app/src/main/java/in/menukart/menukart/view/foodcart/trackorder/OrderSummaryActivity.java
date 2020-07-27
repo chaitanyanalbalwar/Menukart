@@ -56,6 +56,7 @@ import java.util.Random;
 import datamodels.PWEStaticDataModel;
 import in.menukart.menukart.R;
 import in.menukart.menukart.api.ApiClient;
+import in.menukart.menukart.db.MenuKartDatabase;
 import in.menukart.menukart.entities.MarkerData;
 import in.menukart.menukart.entities.explore.Restaurant;
 import in.menukart.menukart.entities.foodcart.FoodCart;
@@ -436,6 +437,9 @@ public class OrderSummaryActivity extends AppCompatActivity implements OnMapRead
     public void onSuccess(SaveOrder saveOrder) {
         ApiClient.hideProgressBar();
         if (saveOrder.getOrder_id() != null) {
+            // Delete record data
+            MenuKartDatabase.getDatabase(context).menuKartDao().deleteAll();
+
             Toast.makeText(OrderSummaryActivity.this, "Your Order Saved Successfully!", Toast.LENGTH_SHORT).show();
             Intent intentPlaceOrder = new Intent(OrderSummaryActivity.this, OrderPlacedActivity.class);
             startActivity(intentPlaceOrder);

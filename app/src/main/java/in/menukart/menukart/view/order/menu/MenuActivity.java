@@ -140,9 +140,8 @@ public class MenuActivity extends AppCompatActivity implements MenuView, CartUpd
         //restaurantMenus.addAll(menu.getData().getMenus());
         //TODO put db query into thread
         restaurantMenus = MenuKartDatabase.getDatabase(MenuActivity.this).menuKartDao().getAll();
-        if(restaurantMenus.isEmpty()){
-            MenuKartDatabase.getDatabase(MenuActivity.this).menuKartDao().insertAll(menu.getData().getMenus());
-        }
+        MenuKartDatabase.getDatabase(MenuActivity.this).menuKartDao().insertAll(menu.getData().getMenus());
+
         Log.i("onSuccessfulMenuList", restaurantMenus.toString());
     }
 

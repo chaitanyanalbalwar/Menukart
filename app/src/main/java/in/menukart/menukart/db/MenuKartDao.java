@@ -28,4 +28,5 @@ public interface MenuKartDao {
     @Query("SELECT * from current_orders WHERE quantity != 0")
     List<RestaurantMenu> getAllAddedItems();
 
+
 }
