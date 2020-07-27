@@ -17,17 +17,22 @@ import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
 
 import java.util.List;
 
+import in.menukart.menukart.CartUpdates;
 import in.menukart.menukart.R;
+import in.menukart.menukart.db.MenuKartDatabase;
 import in.menukart.menukart.entities.order.RestaurantMenu;
 
 public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.CategoryViewHolder> {
     Context context;
     private List<RestaurantMenu> restaurantMenus;
     private boolean checkValue = false;
+    private RestaurantMenu addedRestaurantMenu;
+    private CartUpdates cartUpdates;
 
-    public MenuAdapter(List<RestaurantMenu> restaurantMenus, Context context) {
+    public MenuAdapter(List<RestaurantMenu> restaurantMenus, Context context , CartUpdates cartUpdates) {
         this.restaurantMenus = restaurantMenus;
         this.context = context;
+        this.cartUpdates = cartUpdates;
     }
 
     @Override
@@ -42,7 +47,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.CategoryViewHo
     @Override
     public void onBindViewHolder(final CategoryViewHolder holder, final int position) {
         String imgUrl = "http://admin.menukart.online/uploads/menu/" + restaurantMenus.get(position).getMenu_logo();
-
+        addedRestaurantMenu = restaurantMenus.get(position);
 
         Glide.with(context)
                 .load(imgUrl)
@@ -50,37 +55,33 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.CategoryViewHo
                 // .placeholder(R.drawable.ic_loader_food)
                 .into(holder.imgMenu);
 
-        holder.textMenuName.setText(restaurantMenus.get(position).getMenu_name());
-        holder.textMenuVegNonVeg.setText(restaurantMenus.get(position).getMenu_foodtype());
-        holder.textMenuCost.setText("\u20B9 " + restaurantMenus.get(position).getMenu_price());
+        holder.textMenuName.setText(addedRestaurantMenu.getMenu_name());
+        holder.textMenuVegNonVeg.setText(addedRestaurantMenu.getMenu_foodtype());
+        holder.textMenuCost.setText("\u20B9 " + addedRestaurantMenu.getMenu_price());
 
-        if(restaurantMenus.get(position).isAddedToCart()){
-            holder.btnAddMenu.setClickable(false);
-            holder.btnAddMenu.setText("Added");
-            holder.btnAddMenu.setTextColor(context.getResources().getColor(R.color.colorGray));
-            holder.btnAddMenu.setBackgroundDrawable(context.
-                    getResources().getDrawable(R.drawable.bg_rounded_gray_button));
+        if(addedRestaurantMenu.isAddedToCart()){
+            holder.elegantNumberButton.setVisibility(View.VISIBLE);
+            holder.btnAddMenu.setVisibility(View.INVISIBLE);
+            holder.elegantNumberButton.setNumber(""+addedRestaurantMenu.getQuantity());
+        }else {
+            holder.elegantNumberButton.setVisibility(View.INVISIBLE);
+            holder.btnAddMenu.setVisibility(View.VISIBLE);
         }
 
         holder.btnAddMenu.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 checkValue = true;
-//                if (context instanceof MenuActivity) {
-//                    ((MenuActivity) context).
-//                            addDataOnMenuSelection(restaurantMenus.get(position));
-//                    holder.btnAddMenu.setClickable(false);
-//                    holder.btnAddMenu.setText("Added");
-//                    holder.btnAddMenu.setTextColor(context.getResources().getColor(R.color.colorGray));
-//                  //  holder.btnAddMenu.setBackgroundColor(context.getResources().getColor(R.color.colorGray));
-//                    holder.btnAddMenu.setBackgroundDrawable(context.
-//                            getResources().getDrawable(R.drawable.bg_rounded_gray_button));
-//                    restaurantMenus.get(position).setIsAdded(true);
-//                }
-                // TODO write logic for inserting data into database
+                addedRestaurantMenu.setQuantity(1);
+                addedRestaurantMenu.setIsAdded(true);
+                //TODO move it into thread
+                updateItem();
+
                 holder.btnAddMenu.setVisibility(View.INVISIBLE);
                 holder.elegantNumberButton.setVisibility(View.VISIBLE);
                 holder.elegantNumberButton.setNumber("1");
+
+                cartUpdates.addDataOnMenuSelection();
             }
         });
 
@@ -90,9 +91,23 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.CategoryViewHo
                     if(newValue == 0){
                         holder.elegantNumberButton.setVisibility(View.INVISIBLE);
                         holder.btnAddMenu.setVisibility(View.VISIBLE);
+                        addedRestaurantMenu.setIsAdded(false);
                     }
+                    addedRestaurantMenu.setQuantity(newValue);
+                    updateItem();
+                    cartUpdates.addDataOnMenuSelection();
             }
         });
+    }
+
+    public void updateItem(){
+        new Thread(){
+            @Override
+            public void run() {
+                MenuKartDatabase.getDatabase(context).menuKartDao().updateItem(addedRestaurantMenu.restaurant_id,
+                        addedRestaurantMenu.menu_id, addedRestaurantMenu.quantity, addedRestaurantMenu.isAddedToCart);
+            }
+        }.start();
     }
 
     @Override
@@ -120,7 +135,8 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.CategoryViewHo
     }
 
     public void updateList(List<RestaurantMenu> restaurantMenus){
-        this.restaurantMenus = restaurantMenus;
+        this.restaurantMenus.clear();
+        this.restaurantMenus.addAll(restaurantMenus);
         notifyDataSetChanged();
     }
 

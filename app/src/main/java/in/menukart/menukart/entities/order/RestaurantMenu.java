@@ -1,22 +1,34 @@
 package in.menukart.menukart.entities.order;
 
+import androidx.annotation.NonNull;
+import androidx.room.ColumnInfo;
+import androidx.room.Entity;
+import androidx.room.Ignore;
+import androidx.room.PrimaryKey;
+
 import java.io.Serializable;
 import java.util.List;
 
+@Entity(tableName = "current_orders", primaryKeys = {"menu_id", "restaurant_id"})
 public class RestaurantMenu implements Serializable {
-    private String menu_id;
-    private String restaurant_id;
-    private String menu_logo;
-    private String menu_status;
-    private String menu_foodtype;
-    private String menu_name;
-    private String menu_displayname;
-    private String menu_price;
-    private String menu_categoryid;
-    private String menu_shortcode;
+
+    @NonNull
+    public String menu_id;
+    @NonNull
+    public String restaurant_id;
+    public String menu_logo;
+    public String menu_status;
+    public String menu_foodtype;
+    public String menu_name;
+    public String menu_displayname;
+    public String menu_price;
+    public String menu_categoryid;
+    public String menu_shortcode;
+    @Ignore
     private List<Variation> variation;
-    private String menu_description;
-    private boolean isAddedToCart;
+    public String menu_description;
+    public boolean isAddedToCart;
+    public int quantity = 0;
 
     public String getMenu_foodtype() {
         return menu_foodtype;
@@ -25,8 +37,6 @@ public class RestaurantMenu implements Serializable {
     public void setMenu_foodtype(String menu_foodtype) {
         this.menu_foodtype = menu_foodtype;
     }
-
-
 
 
     public String getMenu_id() {
@@ -124,5 +134,37 @@ public class RestaurantMenu implements Serializable {
 
     public boolean isAddedToCart(){
         return isAddedToCart;
+    }
+
+    public void setAddedToCart(boolean addedToCart) {
+        isAddedToCart = addedToCart;
+    }
+
+    public int getQuantity() {
+        return quantity;
+    }
+
+    public void setQuantity(int quantity) {
+        this.quantity = quantity;
+    }
+
+    @Override
+    public String toString() {
+        return "RestaurantMenu{\n" +
+                "menu_id='" + menu_id + '\'' +
+                ", restaurant_id='" + restaurant_id + '\'' +
+                ", menu_logo='" + menu_logo + '\'' +
+                ", menu_status='" + menu_status + '\'' +
+                ", menu_foodtype='" + menu_foodtype + '\'' +
+                ", menu_name='" + menu_name + '\'' +
+                ", menu_displayname='" + menu_displayname + '\'' +
+                ", menu_price='" + menu_price + '\'' +
+                ", menu_categoryid='" + menu_categoryid + '\'' +
+                ", menu_shortcode='" + menu_shortcode + '\'' +
+                ", variation=" + variation +
+                ", menu_description='" + menu_description + '\'' +
+                ", isAddedToCart=" + isAddedToCart +
+                ", quantity=" + quantity +
+                '}';
     }
 }

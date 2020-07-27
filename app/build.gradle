@@ -101,5 +101,7 @@ dependencies {
     annotationProcessor "androidx.lifecycle:lifecycle-compiler:$rootProject.archLifecycleVersion"
 
     implementation 'com.cepheuen.elegant-number-button:lib:1.0.2'
+
+    debugImplementation 'com.amitshekhar.android:debug-db-encrypt:1.0.6'
     
 }
