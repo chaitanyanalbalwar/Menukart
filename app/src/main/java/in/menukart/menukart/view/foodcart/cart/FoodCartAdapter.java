@@ -16,6 +16,7 @@ import com.bumptech.glide.Glide;
 import java.util.List;
 
 import in.menukart.menukart.R;
+import in.menukart.menukart.db.MenuKartDatabase;
 import in.menukart.menukart.entities.order.RestaurantMenu;
 
 public class FoodCartAdapter extends RecyclerView.Adapter<FoodCartAdapter.FoodCartViewHolder> {
@@ -60,11 +61,12 @@ public class FoodCartAdapter extends RecyclerView.Adapter<FoodCartAdapter.FoodCa
                 holder.textFoodCartCount.setText(String.valueOf(addCount));
                 double foodAddPrice = addCount * Double.parseDouble(restaurantMenu.getMenu_price());
                 holder.textFoodCartPrice.setText("\u20B9 " + String.valueOf(foodAddPrice));
+                restaurantMenu.setQuantity(addCount);
 
                 if (context instanceof FoodCartActivity) {
                     ((FoodCartActivity) context).setDataOnAddItem(restaurantMenu.getMenu_price(), holder.textFoodCartCount.getText().toString());
                 }
-
+                updateItem(restaurantMenu);
             }
         });
 
@@ -77,14 +79,14 @@ public class FoodCartAdapter extends RecyclerView.Adapter<FoodCartAdapter.FoodCa
                     holder.textFoodCartCount.setText(String.valueOf(removeCount));
                     double foodRemovePrice = removeCount * Double.parseDouble(restaurantMenu.getMenu_price());
                     holder.textFoodCartPrice.setText("\u20B9 " + String.valueOf(foodRemovePrice));
+                    restaurantMenu.setQuantity(removeCount);
 
                     if (context instanceof FoodCartActivity) {
                         ((FoodCartActivity) context)
                                 .setDataOnRemoveItem(restaurantMenu.getMenu_price(), holder.textFoodCartCount.getText().toString());
                     }
+                    updateItem(restaurantMenu);
                 }
-
-
             }
         });
 
@@ -95,7 +97,10 @@ public class FoodCartAdapter extends RecyclerView.Adapter<FoodCartAdapter.FoodCa
                 if (context instanceof FoodCartActivity) {
                     ((FoodCartActivity) context)
                             .updateInvoice(restaurantFoodCartMenus);
+                    notifyDataSetChanged();
                 }
+                // Delete records form database
+                MenuKartDatabase.getDatabase(context).menuKartDao().delete(restaurantMenu.getRestaurant_id(), restaurantMenu.getMenu_id());
             }
         });
 
@@ -131,7 +136,15 @@ public class FoodCartAdapter extends RecyclerView.Adapter<FoodCartAdapter.FoodCa
         }
     }
 
-   public List<RestaurantMenu> getUpdatedList(){
-        return restaurantFoodCartMenus;
-   }
+    public void updateItem(final RestaurantMenu addedRestaurantMenu){
+        new Thread(){
+            @Override
+            public void run() {
+                super.run();
+                MenuKartDatabase.getDatabase(context).menuKartDao().updateItem(addedRestaurantMenu.restaurant_id,
+                        addedRestaurantMenu.menu_id, addedRestaurantMenu.quantity, addedRestaurantMenu.isAddedToCart);
+            }
+        }.start();
+    }
+
 }

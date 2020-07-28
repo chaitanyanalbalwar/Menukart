@@ -11,7 +11,7 @@
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_margin="@dimen/text_margin"
+        android:layout_margin="@dimen/search_bar_margin"
         android:orientation="horizontal"
         android:weightSum="2">
 
@@ -24,6 +24,7 @@
             app:queryBackground="@drawable/bg_search_view"
             app:submitBackground="@drawable/bg_search_view"
             android:textSize="@dimen/text_small"
+            android:layout_marginLeft="@dimen/search_bar_margin"
             app:queryHint="@string/search_hint"
             app:iconifiedByDefault="false"/>
 

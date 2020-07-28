@@ -2,6 +2,7 @@ package in.menukart.menukart.view.order.menu;
 
 import android.annotation.SuppressLint;
 import android.content.Context;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -26,7 +27,6 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.CategoryViewHo
     Context context;
     private List<RestaurantMenu> restaurantMenus;
     private boolean checkValue = false;
-    private RestaurantMenu addedRestaurantMenu;
     private CartUpdates cartUpdates;
 
     public MenuAdapter(List<RestaurantMenu> restaurantMenus, Context context , CartUpdates cartUpdates) {
@@ -47,7 +47,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.CategoryViewHo
     @Override
     public void onBindViewHolder(final CategoryViewHolder holder, final int position) {
         String imgUrl = "http://admin.menukart.online/uploads/menu/" + restaurantMenus.get(position).getMenu_logo();
-        addedRestaurantMenu = restaurantMenus.get(position);
+        final RestaurantMenu addedRestaurantMenu = restaurantMenus.get(position);
 
         Glide.with(context)
                 .load(imgUrl)
@@ -58,6 +58,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.CategoryViewHo
         holder.textMenuName.setText(addedRestaurantMenu.getMenu_name());
         holder.textMenuVegNonVeg.setText(addedRestaurantMenu.getMenu_foodtype());
         holder.textMenuCost.setText("\u20B9 " + addedRestaurantMenu.getMenu_price());
+        Log.i("data: ", addedRestaurantMenu.toString());
 
         if(addedRestaurantMenu.isAddedToCart()){
             holder.elegantNumberButton.setVisibility(View.VISIBLE);
@@ -75,7 +76,7 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.CategoryViewHo
                 addedRestaurantMenu.setQuantity(1);
                 addedRestaurantMenu.setIsAdded(true);
                 //TODO move it into thread
-                updateItem();
+                updateItem(addedRestaurantMenu);
 
                 holder.btnAddMenu.setVisibility(View.INVISIBLE);
                 holder.elegantNumberButton.setVisibility(View.VISIBLE);
@@ -94,20 +95,21 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.CategoryViewHo
                         addedRestaurantMenu.setIsAdded(false);
                     }
                     addedRestaurantMenu.setQuantity(newValue);
-                    updateItem();
+                    updateItem(addedRestaurantMenu);
                     cartUpdates.addDataOnMenuSelection();
             }
         });
     }
 
-    public void updateItem(){
-        new Thread(){
-            @Override
-            public void run() {
-                MenuKartDatabase.getDatabase(context).menuKartDao().updateItem(addedRestaurantMenu.restaurant_id,
-                        addedRestaurantMenu.menu_id, addedRestaurantMenu.quantity, addedRestaurantMenu.isAddedToCart);
-            }
-        }.start();
+    public void updateItem(final RestaurantMenu addedRestaurantMenu){
+       new Thread(){
+           @Override
+           public void run() {
+               super.run();
+               MenuKartDatabase.getDatabase(context).menuKartDao().updateItem(addedRestaurantMenu.restaurant_id,
+                       addedRestaurantMenu.menu_id, addedRestaurantMenu.quantity, addedRestaurantMenu.isAddedToCart);
+           }
+       }.start();
     }
 
     @Override
@@ -140,4 +142,13 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.CategoryViewHo
         notifyDataSetChanged();
     }
 
+    @Override
+    public long getItemId(int position) {
+        return super.getItemId(position);
+    }
+
+    @Override
+    public int getItemViewType(int position) {
+        return super.getItemViewType(position);
+    }
 }

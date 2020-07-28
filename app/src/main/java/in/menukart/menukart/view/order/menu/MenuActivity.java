@@ -131,28 +131,36 @@ public class MenuActivity extends AppCompatActivity implements MenuView, CartUpd
     public void onSuccessfulMenuList(Menu menu) {
         ApiClient.hideProgressBar();
         if (menu.getData().getCategories() != null) {
-            categoryAdapter.updateList(menu.getData().getCategories());
+            categories = menu.getData().getCategories();
+            Category category = new Category();
+            category.setId("");
+            category.setCategory_name("All");
+            categories.add(0, category);
+            categoryAdapter.updateList(categories);
         }
 
-        if (menu.getData().getMenus() != null) {
-            menuAdapter.updateList(menu.getData().getMenus());
-        }
         //restaurantMenus.addAll(menu.getData().getMenus());
         //TODO put db query into thread
-        restaurantMenus = MenuKartDatabase.getDatabase(MenuActivity.this).menuKartDao().getAll();
         MenuKartDatabase.getDatabase(MenuActivity.this).menuKartDao().insertAll(menu.getData().getMenus());
+        restaurantMenus = MenuKartDatabase.getDatabase(MenuActivity.this).menuKartDao().getAll();
+
+        menuAdapter.updateList(restaurantMenus);
 
         Log.i("onSuccessfulMenuList", restaurantMenus.toString());
     }
 
     public void setDataOnCategorySelection(String categoryId) {
-        filteredMenus = new ArrayList<>();
-        for (RestaurantMenu restaurantMenu : restaurantMenus) {
-            if (restaurantMenu.getMenu_categoryid().equalsIgnoreCase(categoryId)) {
-                filteredMenus.add(restaurantMenu);
+        if(!categoryId.isEmpty()){
+            filteredMenus = new ArrayList<>();
+            for (RestaurantMenu restaurantMenu : restaurantMenus) {
+                if (restaurantMenu.getMenu_categoryid().equalsIgnoreCase(categoryId)) {
+                    filteredMenus.add(restaurantMenu);
+                }
             }
+            menuAdapter.updateList(filteredMenus);
+        }else {
+            menuAdapter.updateList(restaurantMenus);
         }
-        menuAdapter.updateList(filteredMenus);
     }
 
 
@@ -234,11 +242,14 @@ public class MenuActivity extends AppCompatActivity implements MenuView, CartUpd
     @Override
     protected void onResume() {
         super.onResume();
-       addDataOnMenuSelection();
+        addDataOnMenuSelection();
+        restaurantMenus = MenuKartDatabase.getDatabase(MenuActivity.this).menuKartDao().getAll();
+        menuAdapter.updateList(restaurantMenus);
     }
 
     @Override
     public void addDataOnMenuSelection() {
+        restaurantMenus = MenuKartDatabase.getDatabase(context).menuKartDao().getAll();
         restaurantMenuList = MenuKartDatabase.getDatabase(context).menuKartDao().getAllAddedItems();
         Log.i("addDataOnMenuSelectio:", restaurantMenuList.toString());
 

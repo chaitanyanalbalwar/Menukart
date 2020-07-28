@@ -39,8 +39,7 @@ public class CategoryAdapter extends RecyclerView.Adapter<CategoryAdapter.Catego
         String imgUrl = "http://admin.menukart.online/uploads/category/" + categories.get(position).getCategory_img();
 
 
-        Glide
-                .with(context)
+        Glide.with(context)
                 .load(imgUrl)
                 .centerCrop()
                 .placeholder(R.drawable.ic_loader_food)

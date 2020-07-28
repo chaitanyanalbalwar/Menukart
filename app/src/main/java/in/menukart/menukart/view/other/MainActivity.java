@@ -13,7 +13,6 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -48,7 +47,8 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 101;
     BottomNavigationView bottomNavigationView;
     Toolbar toolbarHome;
-    LinearLayout linearLayoutToolbar, linearLayoutOther;
+    LinearLayout linearLayoutOther;
+    RelativeLayout relativeLayoutToolbar;
     AppCompatTextView toolbarTitle, tvLocationName;
     SharedPreferences sharedPreferences;
     UserDetails userDetails;
@@ -81,7 +81,7 @@ public class MainActivity extends AppCompatActivity {
         Gson gson = new Gson();
         String json = sharedPreferences.getString(AppConstants.USER_DETAILS, null);
         userDetails = gson.fromJson(json, UserDetails.class);
-        linearLayoutToolbar = toolbarHome.findViewById(R.id.ll_toolbar_explore);
+        relativeLayoutToolbar = toolbarHome.findViewById(R.id.ll_toolbar_explore);
         linearLayoutOther = toolbarHome.findViewById(R.id.ll_toolbar_other);
     }
 
@@ -131,7 +131,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.menu_explore:
                         fragment = new ExploreFragment();
                         loadFragment(fragment);
-                        linearLayoutToolbar.setVisibility(View.VISIBLE);
+                        relativeLayoutToolbar.setVisibility(View.VISIBLE);
                         linearLayoutOther.setVisibility(View.GONE);
                         //Toast.makeText(context, "Explore Clicked", Toast.LENGTH_SHORT).show();
                         return true;
@@ -140,7 +140,7 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new OrdersFragment();
                         loadFragment(fragment);
                         toolbarTitle.setText("Order History");
-                        linearLayoutToolbar.setVisibility(View.GONE);
+                        relativeLayoutToolbar.setVisibility(View.GONE);
                         linearLayoutOther.setVisibility(View.VISIBLE);
                         // Toast.makeText(context, "Orders Clicked", Toast.LENGTH_SHORT).show();
                         return true;
@@ -148,7 +148,7 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new SettingsFragment();
                         loadFragment(fragment);
                         toolbarTitle.setText("Settings");
-                        linearLayoutToolbar.setVisibility(View.GONE);
+                        relativeLayoutToolbar.setVisibility(View.GONE);
                         linearLayoutOther.setVisibility(View.VISIBLE);
 
                         return true;
