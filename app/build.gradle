@@ -103,5 +103,8 @@ dependencies {
     implementation 'com.cepheuen.elegant-number-button:lib:1.0.2'
 
     debugImplementation 'com.amitshekhar.android:debug-db-encrypt:1.0.6'
-    
+
+    implementation 'com.nex3z:notification-badge:1.0.4'
+
+
 }

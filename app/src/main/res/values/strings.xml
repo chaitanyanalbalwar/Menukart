@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">MenuKart</string>
+    <string name="app_name">Menukart</string>
     <string name="loading">Loading</string>
     <string name="please_wait">Please Wait</string>
     <string name="title_activity_home">MainActivity</string>

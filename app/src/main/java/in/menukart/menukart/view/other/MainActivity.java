@@ -4,6 +4,7 @@ import android.Manifest;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -29,6 +30,7 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
+import com.nex3z.notificationbadge.NotificationBadge;
 
 import java.io.IOException;
 import java.util.List;
@@ -56,6 +58,8 @@ public class MainActivity extends AppCompatActivity {
     FusedLocationProviderClient fusedLocationProviderClient;
     private Context context;
 
+    NotificationBadge notificationBadge;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -63,7 +67,6 @@ public class MainActivity extends AppCompatActivity {
 
         setCustomToolbar();
         initHomeViews();
-
 
     }
 
@@ -83,6 +86,10 @@ public class MainActivity extends AppCompatActivity {
         userDetails = gson.fromJson(json, UserDetails.class);
         relativeLayoutToolbar = toolbarHome.findViewById(R.id.ll_toolbar_explore);
         linearLayoutOther = toolbarHome.findViewById(R.id.ll_toolbar_other);
+
+        notificationBadge=findViewById(R.id.badge);
+        notificationBadge.setText("12");
+        notificationBadge.setTextColor(Color.WHITE);
     }
 
     private void initHomeViews() {
