@@ -1,7 +1,9 @@
 package in.menukart.menukart.view.order.menu;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -15,6 +17,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
 import com.cepheuen.elegantnumberbutton.view.ElegantNumberButton;
+import com.google.android.material.dialog.MaterialAlertDialogBuilder;
 
 import java.util.List;
 
@@ -24,15 +27,19 @@ import in.menukart.menukart.db.MenuKartDatabase;
 import in.menukart.menukart.entities.order.RestaurantMenu;
 
 public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.CategoryViewHolder> {
+    private String restaurantName = "";
     Context context;
     private List<RestaurantMenu> restaurantMenus;
     private boolean checkValue = false;
     private CartUpdates cartUpdates;
+    private RestaurantMenu alreadyAddedRestaurant;
 
-    public MenuAdapter(List<RestaurantMenu> restaurantMenus, Context context , CartUpdates cartUpdates) {
+    public MenuAdapter(List<RestaurantMenu> restaurantMenus,
+                       Context context , CartUpdates cartUpdates, String restaurantName) {
         this.restaurantMenus = restaurantMenus;
         this.context = context;
         this.cartUpdates = cartUpdates;
+        this.restaurantName = restaurantName;
     }
 
     @Override
@@ -78,9 +85,9 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.CategoryViewHo
                 //TODO move it into thread
                 updateItem(addedRestaurantMenu);
 
-                holder.btnAddMenu.setVisibility(View.INVISIBLE);
+              /*  holder.btnAddMenu.setVisibility(View.INVISIBLE);
                 holder.elegantNumberButton.setVisibility(View.VISIBLE);
-                holder.elegantNumberButton.setNumber("1");
+                holder.elegantNumberButton.setNumber("1");*/
 
             }
         });
@@ -95,15 +102,29 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.CategoryViewHo
                     }
                     addedRestaurantMenu.setQuantity(newValue);
                     updateItem(addedRestaurantMenu);
-
             }
         });
     }
 
     public void updateItem(final RestaurantMenu addedRestaurantMenu){
-        MenuKartDatabase.getDatabase(context).menuKartDao().updateItem(addedRestaurantMenu.restaurant_id,
-                addedRestaurantMenu.menu_id, addedRestaurantMenu.quantity, addedRestaurantMenu.isAddedToCart);
-        cartUpdates.addDataOnMenuSelection();
+        if(isAlreadyOtherRestaurantOder()){
+            showAlreadyOtherRestaurantOrderDialog(addedRestaurantMenu);
+        }else {
+            MenuKartDatabase.getDatabase(context).menuKartDao().updateItem(addedRestaurantMenu.restaurant_id,
+                    addedRestaurantMenu.menu_id, addedRestaurantMenu.quantity, addedRestaurantMenu.isAddedToCart);
+            cartUpdates.addDataOnMenuSelection();
+        }
+    }
+
+    private boolean isAlreadyOtherRestaurantOder(){
+        List<RestaurantMenu> alreadyAdded = MenuKartDatabase.getDatabase(context).menuKartDao().getAllAddedItems();
+        if(alreadyAdded.isEmpty()){
+            return false;
+        }else if(!alreadyAdded.get(0).getRestaurant_id().equalsIgnoreCase(restaurantMenus.get(0).getRestaurant_id())){
+            alreadyAddedRestaurant = alreadyAdded.get(0);
+            return true;
+        }
+        return false;
     }
 
     @Override
@@ -144,5 +165,22 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.CategoryViewHo
     @Override
     public int getItemViewType(int position) {
         return super.getItemViewType(position);
+    }
+
+    private void showAlreadyOtherRestaurantOrderDialog(final RestaurantMenu restaurantMenu){
+        new AlertDialog.Builder(context)
+                .setTitle("Replace cart item?")
+                .setMessage("Your cart contains dishes from other restaurant." +
+                        " Do you want to discard the selection and add dishes from "+restaurantName +"?")
+                .setPositiveButton("YES", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        MenuKartDatabase.getDatabase(context).menuKartDao().deleteAllByRestaurantId(alreadyAddedRestaurant.getRestaurant_id());
+                        updateItem(restaurantMenu);
+                        dialog.dismiss();
+                    }
+                })
+                .setNegativeButton("NO", null)
+                .setIcon(android.R.drawable.ic_dialog_alert)
+                .show();
     }
 }

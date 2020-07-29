@@ -74,7 +74,7 @@ public class MenuActivity extends AppCompatActivity implements MenuView, CartUpd
         categoryAdapter = new CategoryAdapter(new ArrayList<Category>(), context);
         rcvCategory.setAdapter(categoryAdapter);
 
-        menuAdapter = new MenuAdapter(new ArrayList<RestaurantMenu>(), context, this);
+        menuAdapter = new MenuAdapter(new ArrayList<RestaurantMenu>(), context, this, restaurantName);
         rcvMenu.setAdapter(menuAdapter);
     }
 
@@ -250,6 +250,7 @@ public class MenuActivity extends AppCompatActivity implements MenuView, CartUpd
     @Override
     public void addDataOnMenuSelection() {
         restaurantMenus = MenuKartDatabase.getDatabase(context).menuKartDao().getAllByRestaurantId(restaurantId);
+        menuAdapter.updateList(restaurantMenus);
         restaurantMenuList = MenuKartDatabase.getDatabase(context).menuKartDao().getAllAddedItems();
         Log.i("addDataOnMenuSelectio:", restaurantMenuList.toString());
 
