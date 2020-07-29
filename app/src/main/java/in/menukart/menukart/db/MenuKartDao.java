@@ -31,4 +31,7 @@ public interface MenuKartDao {
     @Query("DELETE FROM current_orders WHERE restaurant_id =:restaurantId AND menu_id =:menuId")
     void delete(String restaurantId, String menuId);
 
+    @Query("SELECT * from current_orders WHERE restaurant_id=:restaurantId")
+    List<RestaurantMenu> getAllByRestaurantId(String restaurantId);
+
 }

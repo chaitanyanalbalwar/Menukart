@@ -142,7 +142,7 @@ public class MenuActivity extends AppCompatActivity implements MenuView, CartUpd
         //restaurantMenus.addAll(menu.getData().getMenus());
         //TODO put db query into thread
         MenuKartDatabase.getDatabase(MenuActivity.this).menuKartDao().insertAll(menu.getData().getMenus());
-        restaurantMenus = MenuKartDatabase.getDatabase(MenuActivity.this).menuKartDao().getAll();
+        restaurantMenus = MenuKartDatabase.getDatabase(MenuActivity.this).menuKartDao().getAllByRestaurantId(restaurantId);
 
         menuAdapter.updateList(restaurantMenus);
 
@@ -243,13 +243,13 @@ public class MenuActivity extends AppCompatActivity implements MenuView, CartUpd
     protected void onResume() {
         super.onResume();
         addDataOnMenuSelection();
-        restaurantMenus = MenuKartDatabase.getDatabase(MenuActivity.this).menuKartDao().getAll();
+        restaurantMenus = MenuKartDatabase.getDatabase(MenuActivity.this).menuKartDao().getAllByRestaurantId(restaurantId);
         menuAdapter.updateList(restaurantMenus);
     }
 
     @Override
     public void addDataOnMenuSelection() {
-        restaurantMenus = MenuKartDatabase.getDatabase(context).menuKartDao().getAll();
+        restaurantMenus = MenuKartDatabase.getDatabase(context).menuKartDao().getAllByRestaurantId(restaurantId);
         restaurantMenuList = MenuKartDatabase.getDatabase(context).menuKartDao().getAllAddedItems();
         Log.i("addDataOnMenuSelectio:", restaurantMenuList.toString());
 
