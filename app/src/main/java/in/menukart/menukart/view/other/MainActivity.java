@@ -37,6 +37,7 @@ import java.util.List;
 import java.util.Locale;
 
 import in.menukart.menukart.R;
+import in.menukart.menukart.db.MenuKartDatabase;
 import in.menukart.menukart.entities.foodcart.UserDetails;
 import in.menukart.menukart.util.AppConstants;
 import in.menukart.menukart.view.explore.ExploreFragment;
@@ -88,8 +89,6 @@ public class MainActivity extends AppCompatActivity {
         linearLayoutOther = toolbarHome.findViewById(R.id.ll_toolbar_other);
 
         notificationBadge=findViewById(R.id.badge);
-        notificationBadge.setText("12");
-        notificationBadge.setTextColor(Color.WHITE);
     }
 
     private void initHomeViews() {
@@ -240,5 +239,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        int cartItemCounts = MenuKartDatabase.getDatabase(context)
+                .menuKartDao().getAllAddedItems().size();
+        notificationBadge.setText(""+cartItemCounts);
+        notificationBadge.setVisibility(cartItemCounts == 0 ? View.INVISIBLE : View.VISIBLE);
 
+    }
 }

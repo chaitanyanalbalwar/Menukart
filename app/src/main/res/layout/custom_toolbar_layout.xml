@@ -40,26 +40,29 @@
             android:textColor="@android:color/white"
             android:textSize="@dimen/text_x_large" />
 
-        <!--<ImageView
+        <ImageView
+            android:id="@+id/ic_cart"
             android:layout_below="@+id/tv_location_name"
             android:layout_alignRight="@+id/tv_food_message"
             android:layout_alignParentRight="true"
-            android:layout_marginRight="16dp"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:src="@drawable/cart_icon" />-->
+            android:layout_marginRight="24dp"
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:src="@drawable/cart_icon" />
 
         <com.nex3z.notificationbadge.NotificationBadge
-            android:layout_below="@+id/tv_location_name"
-            android:layout_alignRight="@+id/tv_food_message"
-            android:layout_alignParentRight="true"
-            android:layout_marginRight="10dp"
-            android:textAlignment="textEnd"
             android:id="@+id/badge"
             android:layout_width="28dp"
             android:layout_height="28dp"
-            android:background="@drawable/cart_icon"
+            android:layout_toRightOf="@id/ic_cart"
+            android:layout_alignTop="@id/ic_cart"
+            android:layout_marginLeft="-32dp"
+            android:layout_marginTop="-8dp"
+            android:textColor="@android:color/black"
+            app:nbAnimationEnabled="true"
+            app:nbBackground="@drawable/badge_bg_with_shadow"
             app:nbMaxTextLength="2"/>
+
     </RelativeLayout>
 
     <LinearLayout
