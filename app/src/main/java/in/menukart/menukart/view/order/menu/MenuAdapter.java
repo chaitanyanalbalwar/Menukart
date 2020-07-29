@@ -82,7 +82,6 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.CategoryViewHo
                 holder.elegantNumberButton.setVisibility(View.VISIBLE);
                 holder.elegantNumberButton.setNumber("1");
 
-                cartUpdates.addDataOnMenuSelection();
             }
         });
 
@@ -96,20 +95,15 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.CategoryViewHo
                     }
                     addedRestaurantMenu.setQuantity(newValue);
                     updateItem(addedRestaurantMenu);
-                    cartUpdates.addDataOnMenuSelection();
+
             }
         });
     }
 
     public void updateItem(final RestaurantMenu addedRestaurantMenu){
-       new Thread(){
-           @Override
-           public void run() {
-               super.run();
-               MenuKartDatabase.getDatabase(context).menuKartDao().updateItem(addedRestaurantMenu.restaurant_id,
-                       addedRestaurantMenu.menu_id, addedRestaurantMenu.quantity, addedRestaurantMenu.isAddedToCart);
-           }
-       }.start();
+        MenuKartDatabase.getDatabase(context).menuKartDao().updateItem(addedRestaurantMenu.restaurant_id,
+                addedRestaurantMenu.menu_id, addedRestaurantMenu.quantity, addedRestaurantMenu.isAddedToCart);
+        cartUpdates.addDataOnMenuSelection();
     }
 
     @Override
