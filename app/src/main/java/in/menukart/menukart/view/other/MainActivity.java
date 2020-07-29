@@ -106,19 +106,29 @@ public class MainActivity extends AppCompatActivity {
         mImgCartIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(cartItemCounts == 0){
-                   Toast toast = Toast.makeText(context, "Cart is empty, " +
-                           "Please add something.", Toast.LENGTH_SHORT);
-                   toast.getView().setBackgroundColor(getResources().getColor(R.color.shadow));
-                   TextView toastMessage = toast.getView().findViewById(android.R.id.message);
-                   toastMessage.setTextColor(getResources().getColor(R.color.colorWhite));
-                   toast.show();
-                   return;
-                }
-                Intent intentFoodCart = new Intent(MainActivity.this, FoodCartActivity.class);
-                startActivity(intentFoodCart);
+                navigateToCartScreen();
             }
         });
+        notificationBadge.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                navigateToCartScreen();
+            }
+        });
+    }
+
+    private void navigateToCartScreen(){
+        if(cartItemCounts == 0){
+            Toast toast = Toast.makeText(context, "Cart is empty, " +
+                    "Please add something.", Toast.LENGTH_SHORT);
+            toast.getView().setBackgroundColor(getResources().getColor(R.color.shadow));
+            TextView toastMessage = toast.getView().findViewById(android.R.id.message);
+            toastMessage.setTextColor(getResources().getColor(R.color.colorWhite));
+            toast.show();
+            return;
+        }
+        Intent intentFoodCart = new Intent(MainActivity.this, FoodCartActivity.class);
+        startActivity(intentFoodCart);
     }
 
     private void initHomeViews() {
