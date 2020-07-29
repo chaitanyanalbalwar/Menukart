@@ -2,6 +2,7 @@ package in.menukart.menukart.view.other;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
@@ -12,8 +13,11 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
+import android.widget.Toast;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
@@ -33,6 +37,7 @@ import com.google.gson.Gson;
 import com.nex3z.notificationbadge.NotificationBadge;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 
@@ -41,6 +46,8 @@ import in.menukart.menukart.db.MenuKartDatabase;
 import in.menukart.menukart.entities.foodcart.UserDetails;
 import in.menukart.menukart.util.AppConstants;
 import in.menukart.menukart.view.explore.ExploreFragment;
+import in.menukart.menukart.view.foodcart.cart.FoodCartActivity;
+import in.menukart.menukart.view.order.menu.MenuActivity;
 import in.menukart.menukart.view.order.orderlist.OrdersFragment;
 import in.menukart.menukart.view.setting.SettingsFragment;
 
@@ -58,8 +65,10 @@ public class MainActivity extends AppCompatActivity {
     Location currentLocation;
     FusedLocationProviderClient fusedLocationProviderClient;
     private Context context;
+    private ImageView mImgCartIcon;
 
     NotificationBadge notificationBadge;
+    private int cartItemCounts = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -87,8 +96,29 @@ public class MainActivity extends AppCompatActivity {
         userDetails = gson.fromJson(json, UserDetails.class);
         relativeLayoutToolbar = toolbarHome.findViewById(R.id.ll_toolbar_explore);
         linearLayoutOther = toolbarHome.findViewById(R.id.ll_toolbar_other);
+        mImgCartIcon = findViewById(R.id.ic_cart);
 
         notificationBadge=findViewById(R.id.badge);
+        actions();
+    }
+
+    private void actions() {
+        mImgCartIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                if(cartItemCounts == 0){
+                   Toast toast = Toast.makeText(context, "Cart is empty, " +
+                           "Please add something.", Toast.LENGTH_SHORT);
+                   toast.getView().setBackgroundColor(getResources().getColor(R.color.shadow));
+                   TextView toastMessage = toast.getView().findViewById(android.R.id.message);
+                   toastMessage.setTextColor(getResources().getColor(R.color.colorWhite));
+                   toast.show();
+                   return;
+                }
+                Intent intentFoodCart = new Intent(MainActivity.this, FoodCartActivity.class);
+                startActivity(intentFoodCart);
+            }
+        });
     }
 
     private void initHomeViews() {
@@ -104,7 +134,6 @@ public class MainActivity extends AppCompatActivity {
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         fetchLocation();
-
 
     }
 
@@ -242,7 +271,7 @@ public class MainActivity extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        int cartItemCounts = MenuKartDatabase.getDatabase(context)
+        cartItemCounts = MenuKartDatabase.getDatabase(context)
                 .menuKartDao().getAllAddedItems().size();
         notificationBadge.setText(""+cartItemCounts);
         notificationBadge.setVisibility(cartItemCounts == 0 ? View.INVISIBLE : View.VISIBLE);
