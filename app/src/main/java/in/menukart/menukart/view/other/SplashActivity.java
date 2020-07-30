@@ -17,11 +17,13 @@ import in.menukart.menukart.R;
 
 public class SplashActivity extends AppCompatActivity {
 
+    VideoView videoHolder;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        /*setContentView(R.layout.activity_splash);
-        if (getSupportActionBar() != null) {
+        setContentView(R.layout.activity_splash);
+       /* if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
         new Handler().postDelayed(new Runnable() {
@@ -36,8 +38,8 @@ public class SplashActivity extends AppCompatActivity {
 
         try {
 
-            VideoView videoHolder = new VideoView(this);
-            setContentView(videoHolder);
+            videoHolder = findViewById(R.id.videiView);
+           // setContentView(videoHolder);
             Uri video = Uri.parse("android.resource://" + getPackageName() + "/" + R.raw.splash);
             videoHolder.setVideoURI(video);
 
