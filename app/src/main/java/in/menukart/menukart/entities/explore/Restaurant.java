@@ -1,9 +1,18 @@
 package in.menukart.menukart.entities.explore;
 
+import androidx.annotation.NonNull;
+import androidx.room.Entity;
+import androidx.room.PrimaryKey;
+
 import java.io.Serializable;
 
+@Entity(tableName = "restaurants")
 public class Restaurant implements Serializable {
+
+    @NonNull
+    @PrimaryKey
     private String restaurant_id;
+
     private String restaurant_logo;
     private String restaurant_banner;
     private String restaurant_foodtype;

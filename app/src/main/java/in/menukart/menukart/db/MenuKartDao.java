@@ -8,6 +8,7 @@ import androidx.room.Update;
 
 import java.util.List;
 
+import in.menukart.menukart.entities.explore.Restaurant;
 import in.menukart.menukart.entities.order.RestaurantMenu;
 
 @Dao
@@ -36,4 +37,14 @@ public interface MenuKartDao {
 
     @Query("DELETE FROM current_orders WHERE restaurant_id=:restaurantId")
     void deleteAllByRestaurantId(String restaurantId);
+
+    @Query("SELECT * FROM restaurants WHERE restaurant_foodtype =:restaurantFoodType")
+    List<Restaurant> getFoodTypOnlyRestaurants(String restaurantFoodType);
+
+    @Query("SELECT * from restaurants")
+    List<Restaurant> getAllRestaurants();
+
+    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    void insertAllRestaurant(List<Restaurant> restaurants);
+
 }

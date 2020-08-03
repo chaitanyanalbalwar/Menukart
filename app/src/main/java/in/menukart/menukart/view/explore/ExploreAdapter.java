@@ -56,8 +56,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         holder.textRestaurantType.setText(restaurants.getRestaurant_foodtype());
         holder.textDeliveryTime.setText(restaurants.getRestauran_delivery_min_time() + " Min");
 
-        Glide
-                .with(context)
+        Glide.with(context)
                 .load(restaurants.getRestaurant_logo())
                 .centerCrop()
                 //  .placeholder(R.drawable.ic_no_food)
@@ -123,6 +122,12 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
                 notifyDataSetChanged();
             }
         };
+    }
+
+    public void updateList(List<Restaurant> restaurants) {
+        restaurantList.clear();
+        restaurantList.addAll(restaurants);
+        this.notifyDataSetChanged();
     }
 
     public class ViewHolder extends RecyclerView.ViewHolder {
