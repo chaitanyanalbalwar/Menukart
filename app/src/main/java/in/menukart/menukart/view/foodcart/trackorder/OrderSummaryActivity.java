@@ -179,7 +179,7 @@ public class OrderSummaryActivity extends AppCompatActivity implements OnMapRead
                             // Call payment gateway
                             Random rand = new Random();
                             int randomNumber = rand.nextInt(100);
-                            taxId = String.valueOf(randomNumber);
+                            taxId = System.currentTimeMillis()+""+randomNumber;
                             btnCompleteOrder.setVisibility(View.INVISIBLE);
                             callPaymentGateway(taxId);
                         }
@@ -204,13 +204,13 @@ public class OrderSummaryActivity extends AppCompatActivity implements OnMapRead
 
     private void callPaymentGateway(String taxId) {
         //key|txnid|amount|productinfo|firstname|email_id|udf1|udf2|udf3|udf4|udf5||||||salt|key
-        double amount = Double.parseDouble(foodCart.getCartSubTotal());
+        double amount = Double.parseDouble(foodCart.getCartSubTotal().trim());
 
-        String hashSequence = "V5NL6J8PGO|" + taxId + "|" + amount +
-                "|" + restaurant.getRestaurant_name() + "|"+userDetails.getFname().trim()+
-                "|" + userDetails.getEmail() + "|udf1|udf2|udf3|udf4|udf5||||||E3DQXG7Q9X|V5NL6J8PGO";
+        String hashSequence = "V5NL6J8PGO|" + taxId.trim() + "|" + amount +
+                "|" + restaurant.getRestaurant_name().trim() + "|"+userDetails.getFname().trim()+
+                "|" + userDetails.getEmail().trim() + "|udf1|udf2|udf3|udf4|udf5||||||E3DQXG7Q9X|V5NL6J8PGO";
 
-        get_SHA_512_SecurePassword(hashSequence);
+        get_SHA_512_SecurePassword(hashSequence.trim());
 
 
         Intent intentProceed = new Intent(OrderSummaryActivity.this, PWECouponsActivity.class);

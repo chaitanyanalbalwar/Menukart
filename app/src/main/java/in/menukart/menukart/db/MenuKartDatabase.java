@@ -9,9 +9,10 @@ import androidx.room.RoomDatabase;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import in.menukart.menukart.entities.explore.Restaurant;
 import in.menukart.menukart.entities.order.RestaurantMenu;
 
-@Database(entities = {RestaurantMenu.class}, version = 1, exportSchema = false)
+@Database(entities = {RestaurantMenu.class, Restaurant.class}, version = 1, exportSchema = false)
 public abstract class MenuKartDatabase extends RoomDatabase {
 
     public static final String DB_NAME = "menukart_db";
