@@ -156,6 +156,7 @@ public class ExploreFragment extends Fragment implements RestaurantListView {
         ApiClient.hideProgressBar();
         isRestaurentLoaded = true;
         if (restaurantList.getList() != null) {
+            MenuKartDatabase.getDatabase(context).menuKartDao().deleteAllRestaurants();
             MenuKartDatabase.getDatabase(context).menuKartDao().insertAllRestaurant(restaurantList.getList());
             exploreAdapter = new ExploreAdapter(context,restaurantList.getList());
             recyclerViewExplore.setAdapter(exploreAdapter);

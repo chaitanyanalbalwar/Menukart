@@ -166,5 +166,4 @@ public class Restaurant implements Serializable {
         this.longitude = longitude;
     }
 
-
 }

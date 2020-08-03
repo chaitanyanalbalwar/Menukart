@@ -44,7 +44,10 @@ public interface MenuKartDao {
     @Query("SELECT * from restaurants")
     List<Restaurant> getAllRestaurants();
 
-    @Insert(onConflict = OnConflictStrategy.IGNORE)
+    @Insert(onConflict = OnConflictStrategy.REPLACE)
     void insertAllRestaurant(List<Restaurant> restaurants);
+
+    @Query("DELETE FROM restaurants")
+    void deleteAllRestaurants();
 
 }
