@@ -12,6 +12,9 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.bumptech.glide.load.resource.bitmap.CenterInside;
 
+import java.io.IOException;
+import java.io.InputStream;
+
 import in.menukart.menukart.R;
 
 
@@ -23,7 +26,7 @@ public class SplashActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
-       /* if (getSupportActionBar() != null) {
+        if (getSupportActionBar() != null) {
             getSupportActionBar().hide();
         }
         new Handler().postDelayed(new Runnable() {
@@ -34,9 +37,9 @@ public class SplashActivity extends AppCompatActivity {
                 startActivity(intent);
                 finish();
             }
-        }, 800);*/
+        }, 3000);
 
-        try {
+       /* try {
 
             videoHolder = findViewById(R.id.videiView);
            // setContentView(videoHolder);
@@ -52,11 +55,21 @@ public class SplashActivity extends AppCompatActivity {
 
         }catch (Exception e){
             e.printStackTrace();
+        }*/
+
+       /* InputStream stream = null;
+        try {
+            stream = getAssets().open("piggy.gif");
+        } catch (IOException e) {
+            e.printStackTrace();
         }
+        GifWebView view = new GifWebView(this, "file:///android_asset    /piggy.gif");
+
+        setContentView(view);*/
 
     }
 
-    @Override
+    /*@Override
     public boolean onTouchEvent(MotionEvent event) {
         jump();
         return true;
@@ -67,5 +80,5 @@ public class SplashActivity extends AppCompatActivity {
             return;
         startActivity(new Intent(this, MainActivity.class));
         finish();
-    }
+    }*/
 }

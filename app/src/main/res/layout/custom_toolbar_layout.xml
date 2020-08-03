@@ -47,8 +47,8 @@
             android:layout_alignParentRight="true"
             android:layout_marginRight="24dp"
             android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:src="@drawable/cart_icon" />
+            android:layout_height="26dp"
+            android:src="@drawable/cart_white" />
 
         <com.nex3z.notificationbadge.NotificationBadge
             android:id="@+id/badge"
@@ -61,7 +61,7 @@
             android:textColor="@android:color/black"
             app:nbAnimationEnabled="true"
             app:nbBackground="@drawable/badge_bg_with_shadow"
-            app:nbMaxTextLength="2"/>
+           />
 
     </RelativeLayout>
 
