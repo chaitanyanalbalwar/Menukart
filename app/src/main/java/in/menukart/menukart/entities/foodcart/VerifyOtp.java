@@ -15,8 +15,6 @@ public class VerifyOtp implements Serializable {
         this.userdetails = userdetails;
     }
 
-
-
     public String getStatus() {
         return status;
     }

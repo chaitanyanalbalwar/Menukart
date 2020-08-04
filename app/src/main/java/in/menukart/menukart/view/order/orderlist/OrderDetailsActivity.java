@@ -69,8 +69,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
     @SuppressLint("SetTextI18n")
     private void setOrderSummaryData() {
 
-        Glide
-                .with(OrderDetailsActivity.this)
+        Glide.with(OrderDetailsActivity.this)
                 .load(orderData.getRestaurant_logo())
                 .centerCrop()
                 // .(R.drawable.ic_loader_food)

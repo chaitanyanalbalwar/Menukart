@@ -16,10 +16,6 @@ public class RestaurantList implements Serializable {
         this.list = list;
     }
 
-
-
-
-
     public String getStatus() {
         return status;
     }

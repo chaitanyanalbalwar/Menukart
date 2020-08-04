@@ -7,6 +7,8 @@ import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.CompoundButton;
+import android.widget.LinearLayout;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -16,12 +18,14 @@ import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
+import java.sql.Struct;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
 import in.menukart.menukart.R;
 import in.menukart.menukart.api.ApiClient;
+import in.menukart.menukart.db.MenuKartDatabase;
 import in.menukart.menukart.entities.explore.Restaurant;
 import in.menukart.menukart.entities.explore.RestaurantList;
 import in.menukart.menukart.presenter.explore.RestaurantListPresenterImp;
@@ -39,14 +43,14 @@ public class ExploreFragment extends Fragment implements RestaurantListView {
     View root;
     private String TAG = "MainActivity";
     private Context context;
+    private SwitchCompat switchCompatVeg;
+    private boolean isRestaurentLoaded;
 
     public View onCreateView(@NonNull LayoutInflater inflater,
                              ViewGroup container, Bundle savedInstanceState) {
         root = inflater.inflate(R.layout.fragment_explore, container, false);
 
         initExploreViews();
-
-
         return root;
     }
 
@@ -54,10 +58,7 @@ public class ExploreFragment extends Fragment implements RestaurantListView {
         context = getActivity();
         recyclerViewExplore = root.findViewById(R.id.recycler_view_restaurants);
         searchViewRestaurant = root.findViewById(R.id.search_view_food);
-      //  switchCompatVeg = root.findViewById(R.id.switch_veg_only);
-
-
-
+        switchCompatVeg = root.findViewById(R.id.switch_veg_only);
 
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
@@ -74,14 +75,26 @@ public class ExploreFragment extends Fragment implements RestaurantListView {
         }
 
         setSearchFilter();
-      /*  if (switchCompatVeg.isEnabled())
-        {
-            setVegOnlyFilter();
-        }*/
+
+        setVegOnlyFilter();
 
     }
 
     private void setVegOnlyFilter() {
+        switchCompatVeg.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton compoundButton, boolean b) {
+                if(b){
+                    List<Restaurant> vegOnly = MenuKartDatabase.getDatabase(context).menuKartDao()
+                            .getFoodTypOnlyRestaurants("Vegetarian");
+                    exploreAdapter.updateList(vegOnly);
+                }else  {
+                    List<Restaurant> allRestaurants = MenuKartDatabase.getDatabase(context).menuKartDao()
+                            .getAllRestaurants();
+                    exploreAdapter.updateList(allRestaurants);
+                }
+            }
+        });
     }
 
     private void setSearchFilter() {
@@ -99,8 +112,6 @@ public class ExploreFragment extends Fragment implements RestaurantListView {
                         public void onInit(int status) {
                             if(status != TextToSpeech.ERROR) {
                                 textToSpeech.setLanguage(Locale.UK);
-
-
                                 textToSpeech.speak(query, TextToSpeech.QUEUE_FLUSH, null);
                             }
                         }
@@ -139,11 +150,13 @@ public class ExploreFragment extends Fragment implements RestaurantListView {
     @Override
     public void onSuccessfulRestaurantList(RestaurantList restaurantList) {
         ApiClient.hideProgressBar();
+        isRestaurentLoaded = true;
         if (restaurantList.getList() != null) {
+            MenuKartDatabase.getDatabase(context).menuKartDao().deleteAllRestaurants();
+            MenuKartDatabase.getDatabase(context).menuKartDao().insertAllRestaurant(restaurantList.getList());
             exploreAdapter = new ExploreAdapter(context,restaurantList.getList());
             recyclerViewExplore.setAdapter(exploreAdapter);
             exploreAdapter.notifyDataSetChanged();
         }
-
     }
 }

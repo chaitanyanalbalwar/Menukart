@@ -2,8 +2,10 @@ package in.menukart.menukart.view.other;
 
 import android.Manifest;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
 import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -11,8 +13,10 @@ import android.os.Bundle;
 import android.text.TextUtils;
 import android.view.MenuItem;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
@@ -30,15 +34,20 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
+import com.nex3z.notificationbadge.NotificationBadge;
 
 import java.io.IOException;
+import java.io.Serializable;
 import java.util.List;
 import java.util.Locale;
 
 import in.menukart.menukart.R;
+import in.menukart.menukart.db.MenuKartDatabase;
 import in.menukart.menukart.entities.foodcart.UserDetails;
 import in.menukart.menukart.util.AppConstants;
 import in.menukart.menukart.view.explore.ExploreFragment;
+import in.menukart.menukart.view.foodcart.cart.FoodCartActivity;
+import in.menukart.menukart.view.order.menu.MenuActivity;
 import in.menukart.menukart.view.order.orderlist.OrdersFragment;
 import in.menukart.menukart.view.setting.SettingsFragment;
 
@@ -48,13 +57,18 @@ public class MainActivity extends AppCompatActivity {
     private static final int REQUEST_CODE = 101;
     BottomNavigationView bottomNavigationView;
     Toolbar toolbarHome;
-    LinearLayout linearLayoutToolbar, linearLayoutOther;
+    LinearLayout linearLayoutOther;
+    RelativeLayout relativeLayoutToolbar;
     AppCompatTextView toolbarTitle, tvLocationName;
     SharedPreferences sharedPreferences;
     UserDetails userDetails;
     Location currentLocation;
     FusedLocationProviderClient fusedLocationProviderClient;
     private Context context;
+    private ImageView mImgCartIcon;
+
+    NotificationBadge notificationBadge;
+    private int cartItemCounts = 0;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,7 +77,6 @@ public class MainActivity extends AppCompatActivity {
 
         setCustomToolbar();
         initHomeViews();
-
 
     }
 
@@ -81,8 +94,43 @@ public class MainActivity extends AppCompatActivity {
         Gson gson = new Gson();
         String json = sharedPreferences.getString(AppConstants.USER_DETAILS, null);
         userDetails = gson.fromJson(json, UserDetails.class);
-        linearLayoutToolbar = toolbarHome.findViewById(R.id.ll_toolbar_explore);
+        relativeLayoutToolbar = toolbarHome.findViewById(R.id.ll_toolbar_explore);
         linearLayoutOther = toolbarHome.findViewById(R.id.ll_toolbar_other);
+        mImgCartIcon = findViewById(R.id.ic_cart);
+
+        notificationBadge=findViewById(R.id.badge);
+        actions();
+    }
+
+    private void actions() {
+        mImgCartIcon.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                navigateToCartScreen();
+            }
+        });
+        notificationBadge.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                navigateToCartScreen();
+            }
+        });
+    }
+
+    private void navigateToCartScreen(){
+        if(cartItemCounts == 0){
+            /*Toast toast = Toast.makeText(context, "Cart is empty, " +
+                    "Please add something.", Toast.LENGTH_SHORT);
+            toast.getView().setBackgroundColor(getResources().getColor(R.color.shadow));
+            TextView toastMessage = toast.getView().findViewById(android.R.id.message);
+            toastMessage.setTextColor(getResources().getColor(R.color.colorWhite));
+            toast.show();*/
+
+            Toast.makeText(context, "Cart is empty,Please add something.", Toast.LENGTH_SHORT).show();
+            return;
+        }
+        Intent intentFoodCart = new Intent(MainActivity.this, FoodCartActivity.class);
+        startActivity(intentFoodCart);
     }
 
     private void initHomeViews() {
@@ -98,7 +146,6 @@ public class MainActivity extends AppCompatActivity {
 
         fusedLocationProviderClient = LocationServices.getFusedLocationProviderClient(this);
         fetchLocation();
-
 
     }
 
@@ -131,7 +178,7 @@ public class MainActivity extends AppCompatActivity {
                     case R.id.menu_explore:
                         fragment = new ExploreFragment();
                         loadFragment(fragment);
-                        linearLayoutToolbar.setVisibility(View.VISIBLE);
+                        relativeLayoutToolbar.setVisibility(View.VISIBLE);
                         linearLayoutOther.setVisibility(View.GONE);
                         //Toast.makeText(context, "Explore Clicked", Toast.LENGTH_SHORT).show();
                         return true;
@@ -140,7 +187,7 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new OrdersFragment();
                         loadFragment(fragment);
                         toolbarTitle.setText("Order History");
-                        linearLayoutToolbar.setVisibility(View.GONE);
+                        relativeLayoutToolbar.setVisibility(View.GONE);
                         linearLayoutOther.setVisibility(View.VISIBLE);
                         // Toast.makeText(context, "Orders Clicked", Toast.LENGTH_SHORT).show();
                         return true;
@@ -148,7 +195,7 @@ public class MainActivity extends AppCompatActivity {
                         fragment = new SettingsFragment();
                         loadFragment(fragment);
                         toolbarTitle.setText("Settings");
-                        linearLayoutToolbar.setVisibility(View.GONE);
+                        relativeLayoutToolbar.setVisibility(View.GONE);
                         linearLayoutOther.setVisibility(View.VISIBLE);
 
                         return true;
@@ -233,5 +280,13 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    @Override
+    protected void onResume() {
+        super.onResume();
+        cartItemCounts = MenuKartDatabase.getDatabase(context)
+                .menuKartDao().getAllAddedItems().size();
+        notificationBadge.setText(""+cartItemCounts);
+        notificationBadge.setVisibility(cartItemCounts == 0 ? View.INVISIBLE : View.VISIBLE);
 
+    }
 }

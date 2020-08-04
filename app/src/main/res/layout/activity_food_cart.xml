@@ -59,7 +59,7 @@
                         android:layout_gravity="center_vertical"
                         android:layout_marginStart="8dp"
                         android:layout_weight="0.5"
-                        android:background="@android:color/holo_red_light"
+                        android:background="@color/colorPrimary"
                         android:text="@string/btn_apply_promo_code"
                         android:textColor="@android:color/white" />
 
@@ -219,7 +219,7 @@
         android:layout_height="40dp"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="16dp"
-        android:background="@android:color/holo_red_light"
+        android:background="@color/colorPrimary"
         android:text="@string/btn_proceed_checkout"
         android:textColor="@android:color/white" />
 

@@ -14,6 +14,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatTextView;
+import androidx.loader.content.AsyncTaskLoader;
 import androidx.recyclerview.widget.DividerItemDecoration;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
@@ -26,6 +27,10 @@ import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.List;
 
+import in.menukart.menukart.CartUpdates;
+import in.menukart.menukart.api.MyApplication;
+import in.menukart.menukart.db.MenuKartDatabase;
+import in.menukart.menukart.entities.explore.Restaurant;
 import in.menukart.menukart.entities.foodcart.FoodCart;
 import in.menukart.menukart.view.foodcart.cart.FoodCartActivity;
 import in.menukart.menukart.R;
@@ -37,7 +42,7 @@ import in.menukart.menukart.presenter.order.menu.MenuPresenterImp;
 import in.menukart.menukart.util.AppConstants;
 import in.menukart.menukart.view.order.OrderRecord;
 
-public class MenuActivity extends AppCompatActivity implements MenuView {
+public class MenuActivity extends AppCompatActivity implements MenuView, CartUpdates {
     MenuPresenterImp menuPresenterImp;
     Context context;
     RecyclerView rcvCategory, rcvMenu;
@@ -69,7 +74,7 @@ public class MenuActivity extends AppCompatActivity implements MenuView {
         categoryAdapter = new CategoryAdapter(new ArrayList<Category>(), context);
         rcvCategory.setAdapter(categoryAdapter);
 
-        menuAdapter = new MenuAdapter(new ArrayList<RestaurantMenu>(), context);
+        menuAdapter = new MenuAdapter(new ArrayList<RestaurantMenu>(), context, this, restaurantName);
         rcvMenu.setAdapter(menuAdapter);
     }
 
@@ -126,51 +131,68 @@ public class MenuActivity extends AppCompatActivity implements MenuView {
     public void onSuccessfulMenuList(Menu menu) {
         ApiClient.hideProgressBar();
         if (menu.getData().getCategories() != null) {
-            categoryAdapter.updateList(menu.getData().getCategories());
+            categories = menu.getData().getCategories();
+            Category category = new Category();
+            category.setId("");
+            category.setCategory_name("All");
+            categories.add(0, category);
+            categoryAdapter.updateList(categories);
         }
 
-        if (menu.getData().getMenus() != null) {
-            menuAdapter.updateList(menu.getData().getMenus());
-        }
-        restaurantMenus.addAll(menu.getData().getMenus());
+        //restaurantMenus.addAll(menu.getData().getMenus());
+        //TODO put db query into thread
+        MenuKartDatabase.getDatabase(MenuActivity.this).menuKartDao().insertAll(menu.getData().getMenus());
+        restaurantMenus = MenuKartDatabase.getDatabase(MenuActivity.this).menuKartDao().getAllByRestaurantId(restaurantId);
 
+        menuAdapter.updateList(restaurantMenus);
+
+        Log.i("onSuccessfulMenuList", restaurantMenus.toString());
     }
 
     public void setDataOnCategorySelection(String categoryId) {
-        filteredMenus = new ArrayList<>();
-        for (RestaurantMenu restaurantMenu : restaurantMenus) {
-            if (restaurantMenu.getMenu_categoryid().equalsIgnoreCase(categoryId)) {
-                filteredMenus.add(restaurantMenu);
-
+        if(!categoryId.isEmpty()){
+            filteredMenus = new ArrayList<>();
+            for (RestaurantMenu restaurantMenu : restaurantMenus) {
+                if (restaurantMenu.getMenu_categoryid().equalsIgnoreCase(categoryId)) {
+                    filteredMenus.add(restaurantMenu);
+                }
             }
-        }
-        menuAdapter.updateList(filteredMenus);
-    }
-
-    @SuppressLint("SetTextI18n")
-    public void addDataOnMenuSelection(RestaurantMenu restaurantMenu) {
-        if (restaurantMenu != null) {
-
-            textCartValue.setText("\u20B9 " + restaurantMenu.getMenu_price());
-            restaurantMenuList.add(restaurantMenu);
-            if (restaurantMenuList != null) {
-                showItemCart();
-            } else {
-                llCart.setVisibility(View.GONE);
-            }
+            menuAdapter.updateList(filteredMenus);
+        }else {
+            menuAdapter.updateList(restaurantMenus);
         }
     }
+
+
+//    public void addDataOnMenuSelction() {
+//        restaurantMenuList = MenuKartDatabase.getDatabase(context).menuKartDao().getAllAddedItems();
+//        Log.i("addDataOnMenuSelectio:", restaurantMenuList.toString());
+//
+//        if(!restaurantMenuList.isEmpty()){
+//           showItemCart();
+//        }else {
+//            llCart.setVisibility(View.GONE);
+//        }
+//       /* if (restaurantMenu != null) {
+//            textCartValue.setText("\u20B9 " + restaurantMenu.getMenu_price());
+//            if (restaurantMenuList != null) {
+//                showItemCart();
+//            } else {
+//                llCart.setVisibility(View.GONE);
+//            }
+//        }*/
+//    }
 
     private void showItemCart() {
-        llCart.setVisibility(View.VISIBLE);
 
+        llCart.setVisibility(View.VISIBLE);
         textCartItems.setText("Go To Cart " + "(" + restaurantMenuList.size() + " items added)");
         textCartItems.setSingleLine();
         textCartItems.setTextSize(12);
 
         int total = 0;
         for (int i = 0; i < restaurantMenuList.size(); i++) {
-            total = total + Integer.parseInt(restaurantMenuList.get(i).getMenu_price());
+            total = total + Integer.parseInt(restaurantMenuList.get(i).getMenu_price()) * restaurantMenuList.get(i).getQuantity();
         }
         textCartValue.setText("\u20B9 " + String.valueOf(total));
 
@@ -220,8 +242,19 @@ public class MenuActivity extends AppCompatActivity implements MenuView {
     @Override
     protected void onResume() {
         super.onResume();
-        restaurantMenuList = OrderRecord.getOrderList();
-        if(restaurantMenuList.size() > 0){
+        addDataOnMenuSelection();
+        restaurantMenus = MenuKartDatabase.getDatabase(MenuActivity.this).menuKartDao().getAllByRestaurantId(restaurantId);
+        menuAdapter.updateList(restaurantMenus);
+    }
+
+    @Override
+    public void addDataOnMenuSelection() {
+        restaurantMenus = MenuKartDatabase.getDatabase(context).menuKartDao().getAllByRestaurantId(restaurantId);
+        menuAdapter.updateList(restaurantMenus);
+        restaurantMenuList = MenuKartDatabase.getDatabase(context).menuKartDao().getAllAddedItems();
+        Log.i("addDataOnMenuSelectio:", restaurantMenuList.toString());
+
+        if(!restaurantMenuList.isEmpty()){
             showItemCart();
         }else {
             llCart.setVisibility(View.GONE);

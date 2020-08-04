@@ -4,6 +4,7 @@ import android.app.Application;
 
 import java.util.concurrent.TimeUnit;
 
+import in.menukart.menukart.db.MenuKartDatabase;
 import okhttp3.OkHttpClient;
 import okhttp3.logging.HttpLoggingInterceptor;
 import retrofit2.Retrofit;
@@ -13,6 +14,7 @@ import retrofit2.converter.scalars.ScalarsConverterFactory;
 public class MyApplication extends Application {
 
     public static final String BASE_URL = "http://api.menukart.online";
+    private static MenuKartDatabase menukartDb;
 
     public static Retrofit getRetrofit() {
         HttpLoggingInterceptor logging = new HttpLoggingInterceptor();

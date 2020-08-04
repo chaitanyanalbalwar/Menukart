@@ -147,7 +147,7 @@
         android:layout_height="40dp"
         android:layout_alignParentBottom="true"
         android:layout_marginTop="8dp"
-        android:background="@color/colorAccent"
+        android:background="@color/colorPrimary"
         android:text="@string/btn_complete_order"
         android:textColor="@android:color/white" />
 </RelativeLayout>

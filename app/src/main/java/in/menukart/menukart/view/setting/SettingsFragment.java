@@ -1,7 +1,9 @@
 package in.menukart.menukart.view.setting;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -143,15 +145,11 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
     }
 
     private void openDialogLogOut() {
-        new iOSDialogBuilder(context)
-                .setTitle(context.getResources().getString(R.string.text_log_out))
-                .setSubtitle(context.getResources().getString(R.string.text_ask_for_log_out))
-                .setBoldPositiveLabel(true)
-                .setFont(Typeface.SANS_SERIF)
-                .setCancelable(false)
-                .setPositiveListener(context.getString(R.string.text_log_out_yes), new iOSDialogClickListener() {
-                    @Override
-                    public void onClick(iOSDialog dialog) {
+        new AlertDialog.Builder(getActivity())
+                .setTitle("Logout")
+                .setMessage("Would you like to logout?")
+                .setPositiveButton("Yes", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
                         SharedPreferences sharedPreferences = context.getSharedPreferences(AppConstants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
                         SharedPreferences.Editor editor = sharedPreferences.edit();
                         editor.clear();
@@ -162,12 +160,12 @@ public class SettingsFragment extends Fragment implements View.OnClickListener {
                         startActivity(intent);
                     }
                 })
-                .setNegativeListener(context.getString(R.string.text_log_out_no), new iOSDialogClickListener() {
-                    @Override
-                    public void onClick(iOSDialog dialog) {
+                .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
                         dialog.dismiss();
                     }
                 })
-                .build().show();
+                .show();
+
     }
 }

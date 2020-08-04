@@ -1,6 +1,10 @@
 package in.menukart.menukart.api;
 
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
+import android.content.Intent;
+import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.graphics.Typeface;
 import android.net.ConnectivityManager;
@@ -26,6 +30,8 @@ import in.menukart.menukart.entities.order.OrderMenu;
 import in.menukart.menukart.entities.setting.ManageAddress;
 import in.menukart.menukart.entities.setting.Privacy;
 import in.menukart.menukart.entities.setting.ResponseSuccess;
+import in.menukart.menukart.util.AppConstants;
+import in.menukart.menukart.view.other.MainActivity;
 import retrofit2.Call;
 import retrofit2.Callback;
 import retrofit2.Response;
@@ -59,20 +65,16 @@ public class ApiClient {
         }
     }
 
-    public static void openAlertDialogWithPositive(Context context, String message, String positiveBtnText) {
-        new iOSDialogBuilder(context)
-//                .setTitle(context.getResources().getString(R.string.cricketer))
-                .setSubtitle(message)
-                .setBoldPositiveLabel(true)
-                .setFont(Typeface.SANS_SERIF)
-                .setCancelable(false)
-                .setPositiveListener(context.getString(R.string.dialog_label_ok), new iOSDialogClickListener() {
-                    @Override
-                    public void onClick(iOSDialog dialog) {
-                        dialog.dismiss();
+    public static void openAlertDialogWithPositive(final Context context, String message, String positiveBtnText) {
+        new AlertDialog.Builder(context)
+                .setTitle("Connectivity")
+                .setMessage(message)
+                .setPositiveButton(context.getString(R.string.dialog_label_ok), new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                      dialog.dismiss();
                     }
                 })
-                .build().show();
+                .show();
     }
 
     public static void showProgressBar(Context context) {

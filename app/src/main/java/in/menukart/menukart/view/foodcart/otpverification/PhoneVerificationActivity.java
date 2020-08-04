@@ -1,7 +1,9 @@
 package in.menukart.menukart.view.foodcart.otpverification;
 
 import android.annotation.SuppressLint;
+import android.app.AlertDialog;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Typeface;
@@ -34,6 +36,7 @@ import in.menukart.menukart.presenter.foodcart.otpverification.VerifyOtpPresente
 import in.menukart.menukart.util.AppConstants;
 import in.menukart.menukart.view.foodcart.signup.SignUpActivity;
 import in.menukart.menukart.view.foodcart.trackorder.OrderSummaryActivity;
+import in.menukart.menukart.view.other.MainActivity;
 
 public class PhoneVerificationActivity extends AppCompatActivity implements VerifyOtpView, ResendOtpView {
 
@@ -167,21 +170,22 @@ public class PhoneVerificationActivity extends AppCompatActivity implements Veri
         } else {
             // editor.clear();
             //editor.apply();
-            new iOSDialogBuilder(context)
-//                .setTitle(context.getResources().getString(R.string.cricketer))
-                    .setSubtitle(getResources().getString(R.string.text_number_not_registered))
-                    .setBoldPositiveLabel(false)
-                    .setFont(Typeface.SANS_SERIF)
-                    .setCancelable(false)
-                    .setPositiveListener(context.getString(R.string.btn_text_sign_up), new iOSDialogClickListener() {
-                        @Override
-                        public void onClick(iOSDialog dialog) {
+            new AlertDialog.Builder(PhoneVerificationActivity.this)
+                   // .setTitle("Logout")
+                    .setMessage(getResources().getString(R.string.text_number_not_registered))
+                    .setPositiveButton(context.getString(R.string.btn_text_sign_up), new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
                             Intent intentSignUp = new Intent(PhoneVerificationActivity.this, SignUpActivity.class);
                             startActivity(intentSignUp);
                             finish();
                         }
                     })
-                    .build().show();
+                    .setNegativeButton("No", new DialogInterface.OnClickListener() {
+                        public void onClick(DialogInterface dialog, int which) {
+                            dialog.dismiss();
+                        }
+                    })
+                    .show();
         }
 
     }

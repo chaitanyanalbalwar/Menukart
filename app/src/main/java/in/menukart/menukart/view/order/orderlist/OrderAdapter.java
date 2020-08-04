@@ -48,8 +48,7 @@ public class OrderAdapter extends RecyclerView.Adapter<OrderAdapter.OrderViewHol
     public void onBindViewHolder(OrderViewHolder holder, final int position) {
         final OrderData orderData = orderDataList.get(position);
 
-        Glide
-                .with(context)
+        Glide.with(context)
                 .load(orderData.getRestaurant_logo())
                 .centerCrop()
                 // .placeholder(R.drawable.ic_loader_food)
