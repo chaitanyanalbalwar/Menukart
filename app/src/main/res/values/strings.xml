@@ -31,7 +31,7 @@
 
 
     <string name="dialog_label_ok">OK</string>
-    <string name="error_check_network">Check internet connection</string>
+    <string name="error_check_network">Check your internet connection</string>
     <string name="error_invalid_response">Something went wrong,please try again later!</string>
 
     <!--********** Strings for settings screen **********-->

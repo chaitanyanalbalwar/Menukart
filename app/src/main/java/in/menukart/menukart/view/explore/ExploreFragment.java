@@ -75,10 +75,6 @@ public class ExploreFragment extends Fragment implements RestaurantListView {
         }
 
         setSearchFilter();
-      /*  if (switchCompatVeg.isEnabled())
-        {
-            setVegOnlyFilter();
-        }*/
 
         setVegOnlyFilter();
 
