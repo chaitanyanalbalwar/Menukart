@@ -313,20 +313,36 @@ public class OrderSummaryActivity extends AppCompatActivity implements OnMapRead
 
     @Override
     public void onMapReady(GoogleMap googleMap) {
-        mMap = googleMap;
 
-        if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            int locationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
-            if (locationPermission != PackageManager.PERMISSION_GRANTED) {
-                makeLocationPermissionRequest();
+        try {
+
+            mMap = googleMap;
+
+            if (android.os.Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                int locationPermission = ContextCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION);
+                if (locationPermission != PackageManager.PERMISSION_GRANTED) {
+                    // makeLocationPermissionRequest();
+
+                    if(userCurrentLatitude!=null){
+                        showPolyline();
+                    }else {
+                        Toast.makeText(context, "User Current Location Not Given", Toast.LENGTH_SHORT).show();
+                    }
+
+                } else {
+                    //  showPolyline();
+                    makeLocationPermissionRequest();
+                }
             } else {
                 showPolyline();
             }
-        } else {
-            showPolyline();
+            mMap.getUiSettings().setZoomControlsEnabled(false);
+            mMap.getUiSettings().setMapToolbarEnabled(false);
+
+        }catch (Exception e){
+            e.printStackTrace();
         }
-        mMap.getUiSettings().setZoomControlsEnabled(false);
-        mMap.getUiSettings().setMapToolbarEnabled(false);
+
 
 
     }
@@ -339,19 +355,27 @@ public class OrderSummaryActivity extends AppCompatActivity implements OnMapRead
         Number number2 = null;
         Number number3 = null;
         Number number4 = null;
-        try {
-            number1 = _format.parse(restaurant.getLatitude());
-            number2 = _format.parse(restaurant.getLongitude());
-            number3 = _format.parse(userCurrentLatitude);
-            number4 = _format.parse(userCurrentLongitude);
-            restaurantLat = Double.parseDouble(number1.toString());
-            restaurantLong = Double.parseDouble(number2.toString());
-            userLat = Double.parseDouble(number3.toString());
-            userLong = Double.parseDouble(number4.toString());
-            System.err.println("Double Value is :" + userLong);
-        } catch (ParseException e) {
 
+        if (userCurrentLatitude!=null){
+
+            try {
+                number1 = _format.parse(restaurant.getLatitude());
+                number2 = _format.parse(restaurant.getLongitude());
+                number3 = _format.parse(userCurrentLatitude);
+                number4 = _format.parse(userCurrentLongitude);
+                restaurantLat = Double.parseDouble(number1.toString());
+                restaurantLong = Double.parseDouble(number2.toString());
+                userLat = Double.parseDouble(number3.toString());
+                userLong = Double.parseDouble(number4.toString());
+                System.err.println("Double Value is :" + userLong);
+            } catch (ParseException e) {
+                 e.printStackTrace();
+            }
+        }else {
+            Toast.makeText(context, "User Current Location Not Given", Toast.LENGTH_SHORT).show();
         }
+
+
 
         /*double restaurantLat = Double.parseDouble(restaurant.getLatitude());
         double restaurantLong = Double.parseDouble(restaurant.getLongitude());
