@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "2695918302",
+    "firebase_url": "https://menukart-4785e.firebaseio.com",
+    "project_id": "menukart-4785e",
+    "storage_bucket": "menukart-4785e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:2695918302:android:b3c062cbf6a5876676484f",
+        "android_client_info": {
+          "package_name": "in.menukart.menukart"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "2695918302-grappt14fnieugq1tt61lamqr69hr18f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyD_yByQdKf1kByeMgvS6R7OsTZezJoMU2c"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "2695918302-grappt14fnieugq1tt61lamqr69hr18f.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

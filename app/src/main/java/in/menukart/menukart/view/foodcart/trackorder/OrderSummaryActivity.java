@@ -90,6 +90,7 @@ public class OrderSummaryActivity extends AppCompatActivity implements OnMapRead
     private UserDetails userDetails;
     private Restaurant restaurant;
     private FoodCart foodCart;
+    private String userAddress;
 
     public static String get_SHA_512_SecurePassword(String input) {
         try {
@@ -154,8 +155,9 @@ public class OrderSummaryActivity extends AppCompatActivity implements OnMapRead
         rbOnlinePay = findViewById(R.id.rb_pay_online);
         btnCompleteOrder = findViewById(R.id.btn_complete_order);
         btnChangeLocation = findViewById(R.id.btn_change_location);
-        textFromSummaryAddress.setText(restaurant == null? "" :restaurant.getRestaurant_address());
-        textToSummaryAddress.setText(userCurrentAddress);
+        textFromSummaryAddress.setText(restaurant == null? "" :restaurant.getRestaurant_address().trim());
+        textToSummaryAddress.setText(userCurrentAddress.trim());
+        userAddress=sharedPreferences.getString(AppConstants.USER_CURRENT_ADDRESS, null);
 
         // Obtain the SupportMapFragment and get notified when the map is ready to be used.
         SupportMapFragment mapFragment = (SupportMapFragment) getSupportFragmentManager()
@@ -184,8 +186,7 @@ public class OrderSummaryActivity extends AppCompatActivity implements OnMapRead
                             callPaymentGateway(taxId);
                         }
                     }else {
-                        ApiClient.openAlertDialogWithPositive(context, getString(R.string.error_check_network),
-                                getString(R.string.dialog_label_ok));
+                        ApiClient.openAlertDialogWithPositive(context, getString(R.string.error_check_network), getString(R.string.dialog_label_ok));
                     }
                 }else {
                     Toast.makeText(OrderSummaryActivity.this, "Please Select Payment Option", Toast.LENGTH_SHORT).show();
@@ -237,7 +238,8 @@ public class OrderSummaryActivity extends AppCompatActivity implements OnMapRead
         intentProceed.putExtra("hash", hashSHA512);
         intentProceed.putExtra("unique_id", userDetails.getUser_id());
         intentProceed.putExtra("pay_mode", "production");
-       /* intentProceed.putExtra("sub_merchant_id", "Pass sub merchant " +
+        // intentProceed.putExtra("sub_merchant_id","S24714ZNJH");
+        /*intentProceed.putExtra("sub_merchant_id", "Pass sub merchant " +
                 "id If you are using a Sub-Aggregator feature . " +
                 "Do not pass this parameter if the Sub-Aggregator " +
                 "feature is not enabled.");*/
@@ -259,8 +261,8 @@ public class OrderSummaryActivity extends AppCompatActivity implements OnMapRead
                 jsonObject.put("menu_name", restaurantMenu.getMenu_name());
                 jsonObject.put("menu_price", restaurantMenu.getMenu_price());
                 jsonObject.put("qty", foodCart.getQty());
-                jsonObject.put("cgst", "2.5");
-                jsonObject.put("sgst", "2.5");
+                jsonObject.put("cgst", foodCart.getTotalCgst());
+                jsonObject.put("sgst", foodCart.getTotalSgst());
                 //  jsonObject.put("variation", restaurantMenu.getVariation());
                 jsonObject.put("menu_variation", "");
                 list.add(jsonObject);
@@ -270,15 +272,17 @@ public class OrderSummaryActivity extends AppCompatActivity implements OnMapRead
             params.put("order", jsArray.toString());
             params.put("user_id", userDetails.getUser_id());
             params.put("cart_subtotal", foodCart.getCartSubTotal());
-            params.put("total_cgst", "2.50");
-            params.put("total_sgst", "2.50");
+            params.put("total_cgst", foodCart.getTotalCgst());
+            params.put("total_sgst", foodCart.getTotalSgst());
             params.put("payment_type", selectedPaymentOption);
-            params.put("delivery_address", "Pune");
+            params.put("delivery_address", userAddress);
             params.put("order_type", "takeout");
             params.put("charges", foodCart.getCharges());
             params.put("total", foodCart.getTotal());
             params.put("transaction_id", "");
             params.put("easepayid", "");
+            params.put("discount_amount", "0");
+            params.put("coupon", "");
 
             String string = params.toString();
             Log.d("TAG", string);

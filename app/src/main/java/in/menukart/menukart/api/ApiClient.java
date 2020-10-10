@@ -30,6 +30,7 @@ import in.menukart.menukart.entities.order.OrderMenu;
 import in.menukart.menukart.entities.setting.ManageAddress;
 import in.menukart.menukart.entities.setting.Privacy;
 import in.menukart.menukart.entities.setting.ResponseSuccess;
+import in.menukart.menukart.model.order.discount.MenusModel;
 import in.menukart.menukart.util.AppConstants;
 import in.menukart.menukart.view.other.MainActivity;
 import retrofit2.Call;
@@ -400,6 +401,27 @@ public class ApiClient {
 
                 @Override
                 public void onFailure(Call<SaveOrder> call, Throwable t) {
+                    apiClientCallback.onFailure(new NetworkException(context.getString(R.string.error_invalid_response)));
+                }
+            });
+        }
+    }
+
+    public void userDiscount(final APIClientCallback<ResponseSuccess> apiClientCallback, Map<String, String> params){
+        if (!isConnectedToInternet(context)) {
+            apiClientCallback.onFailure(new NetworkException(context.getString(R.string.error_check_network)));
+        } else {
+            menuKartServiceApi = retrofit.create(MenuKartServiceApi.class);
+            Call<ResponseSuccess> responseSuccessCall = menuKartServiceApi.DISCOUNT_COUPAN(params);
+            responseSuccessCall.enqueue(new Callback<ResponseSuccess>() {
+                @Override
+                public void onResponse(Call<ResponseSuccess> call, Response<ResponseSuccess> response) {
+                    ResponseSuccess responseSuccess = response.body();
+                    apiClientCallback.onSuccess(responseSuccess);
+                }
+
+                @Override
+                public void onFailure(Call<ResponseSuccess> call, Throwable t) {
                     apiClientCallback.onFailure(new NetworkException(context.getString(R.string.error_invalid_response)));
                 }
             });

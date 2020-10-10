@@ -46,7 +46,7 @@ public class MenuActivity extends AppCompatActivity implements MenuView, CartUpd
     MenuPresenterImp menuPresenterImp;
     Context context;
     RecyclerView rcvCategory, rcvMenu;
-    String restaurantId;
+    String restaurantId,CGST,SGST;
     List<RestaurantMenu> restaurantMenus;
     List<RestaurantMenu> restaurantMenuList;
     List<Category> categories;
@@ -62,8 +62,12 @@ public class MenuActivity extends AppCompatActivity implements MenuView, CartUpd
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_menu);
         context = MenuActivity.this;
+
         String restaurantName = getIntent().getExtras().getString(AppConstants.RESTAURANT_NAME);
         restaurantId = getIntent().getExtras().getString(AppConstants.RESTAURANT_ID);
+        CGST = getIntent().getExtras().getString(AppConstants.CGST);
+        SGST = getIntent().getExtras().getString(AppConstants.SGST);
+
         if (getSupportActionBar() != null) {
             getSupportActionBar().setTitle(restaurantName);
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
@@ -201,6 +205,8 @@ public class MenuActivity extends AppCompatActivity implements MenuView, CartUpd
             public void onClick(View view) {
                 Intent intentFoodCart = new Intent(MenuActivity.this, FoodCartActivity.class);
                 intentFoodCart.putExtra("selectedMenus", (Serializable) restaurantMenuList);
+                intentFoodCart.putExtra("CGST", CGST);
+                intentFoodCart.putExtra("SGST", SGST);
                 startActivity(intentFoodCart);
             }
         });

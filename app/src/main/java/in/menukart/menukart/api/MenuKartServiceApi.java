@@ -84,5 +84,9 @@ public interface MenuKartServiceApi {
     @FormUrlEncoded
     Call<SaveOrder> USER_SAVE_ORDER(@FieldMap Map<String, String> params);
 
+    @POST("/discount_coupon")
+    @FormUrlEncoded
+    Call<ResponseSuccess> DISCOUNT_COUPAN(@FieldMap Map<String, String> params);
+
 
 }

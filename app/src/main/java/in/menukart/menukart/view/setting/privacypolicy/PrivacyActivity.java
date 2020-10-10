@@ -118,8 +118,6 @@ public class PrivacyActivity extends AppCompatActivity implements PrivacyView {
             } catch (UnsupportedEncodingException e) {
                 e.printStackTrace();
             }
-
-
         }
     }
 

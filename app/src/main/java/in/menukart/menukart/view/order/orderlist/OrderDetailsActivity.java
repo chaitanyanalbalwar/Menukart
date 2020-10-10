@@ -17,6 +17,8 @@ import java.text.DecimalFormat;
 import java.util.List;
 
 import in.menukart.menukart.R;
+import in.menukart.menukart.db.MenuKartDatabase;
+import in.menukart.menukart.entities.explore.Restaurant;
 import in.menukart.menukart.entities.order.OrderData;
 import in.menukart.menukart.entities.order.OrderList;
 import in.menukart.menukart.util.AppConstants;
@@ -35,6 +37,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_order_details);
+
         if (getSupportActionBar() != null) {
             getSupportActionBar().setDisplayHomeAsUpEnabled(true);
         }
@@ -61,6 +64,8 @@ public class OrderDetailsActivity extends AppCompatActivity {
         LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         layoutManager.setOrientation(LinearLayoutManager.HORIZONTAL);
         rcvOrderMenus.setLayoutManager(layoutManager);
+
+
 
         setOrderSummaryData();
 
@@ -90,7 +95,7 @@ public class OrderDetailsActivity extends AppCompatActivity {
         textTax.setText("\u20B9 " + tax);
         double deliveryCharges = Double.parseDouble(orderData.getCharges());
         textDeliveryCharge.setText("\u20B9 " + new DecimalFormat("##.##").format(deliveryCharges));
-        textPromoDiscount.setText("- \u20B9 " + "0.00");
+        textPromoDiscount.setText(" \u20B9 " + "0.00");
         double allTotal = Double.parseDouble(orderData.getTotalall());
         textSubTotal.setText("\u20B9 " + allTotal);
         textPaymentMethod.setText("Payment - " + orderData.getPayment_type());

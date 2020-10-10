@@ -63,15 +63,13 @@ public class ExploreFragment extends Fragment implements RestaurantListView {
         LinearLayoutManager layoutManager = new LinearLayoutManager(getActivity());
         layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
         recyclerViewExplore.setLayoutManager(layoutManager);
-        restaurantListPresenterImp = new RestaurantListPresenterImp(this,
-                new ApiClient(context));
+        restaurantListPresenterImp = new RestaurantListPresenterImp(this, new ApiClient(context));
 
 
         if (ApiClient.isConnectedToInternet(context)) {
             getListOfRestaurantsData();
         } else {
-            ApiClient.openAlertDialogWithPositive(context, getString(R.string.error_check_network),
-                    getString(R.string.dialog_label_ok));
+            ApiClient.openAlertDialogWithPositive(context, getString(R.string.error_check_network), getString(R.string.dialog_label_ok));
         }
 
         setSearchFilter();

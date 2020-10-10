@@ -25,6 +25,7 @@ public class AppConstants {
     //public static final String USER_ID = "USER_ID";
     public static final String USER_DETAILS = "USER_DETAILS";
 
-
+    public static final String CGST="CGST";
+    public static final String SGST="SGST";
 
 }

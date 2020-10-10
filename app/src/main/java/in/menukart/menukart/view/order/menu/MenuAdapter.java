@@ -53,8 +53,10 @@ public class MenuAdapter extends RecyclerView.Adapter<MenuAdapter.CategoryViewHo
     @SuppressLint("SetTextI18n")
     @Override
     public void onBindViewHolder(final CategoryViewHolder holder, final int position) {
-        String imgUrl = "http://admin.menukart.online/uploads/menu/" + restaurantMenus.get(position).getMenu_logo();
+
         final RestaurantMenu addedRestaurantMenu = restaurantMenus.get(position);
+
+        String imgUrl = "http://admin.menukart.online/uploads/menu/" + restaurantMenus.get(position).getMenu_logo();
 
         Glide.with(context)
                 .load(imgUrl)

@@ -1,6 +1,7 @@
 package in.menukart.menukart.view.explore;
 
 import android.annotation.SuppressLint;
+import android.app.Activity;
 import android.content.Context;
 import android.content.Intent;
 import android.content.SharedPreferences;
@@ -9,6 +10,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Filter;
 import android.widget.Filterable;
+import android.widget.Toast;
 
 import androidx.appcompat.widget.AppCompatImageView;
 import androidx.appcompat.widget.AppCompatTextView;
@@ -56,6 +58,7 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         holder.textRestaurantType.setText(restaurants.getRestaurant_foodtype());
         holder.textDeliveryTime.setText(restaurants.getRestauran_delivery_min_time() + " Min");
 
+
         Glide.with(context)
                 .load(restaurants.getRestaurant_logo())
                 .centerCrop()
@@ -65,16 +68,32 @@ public class ExploreAdapter extends RecyclerView.Adapter<ExploreAdapter.ViewHold
         holder.itemView.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(context, MenuActivity.class);
-                intent.putExtra(AppConstants.RESTAURANT_ID, restaurants.getRestaurant_id());
-                intent.putExtra(AppConstants.RESTAURANT_NAME, restaurants.getRestaurant_name());
-                context.startActivity(intent);
+
                 SharedPreferences prefs = context.getSharedPreferences(AppConstants.SHARED_PREFERENCES, Context.MODE_PRIVATE);
                 SharedPreferences.Editor editor = prefs.edit();
-                Gson gson = new Gson();
-                String json = gson.toJson(restaurants);
-                editor.putString(AppConstants.SELECTED_RESTAURANT_DETAILS, json);
-                editor.apply();
+
+                String addres=prefs.getString(AppConstants.USER_CURRENT_ADDRESS,"");
+
+                if (addres!=""){
+
+                    Intent intent = new Intent(context, MenuActivity.class);
+                    intent.putExtra(AppConstants.RESTAURANT_ID, restaurants.getRestaurant_id());
+                    intent.putExtra(AppConstants.RESTAURANT_NAME, restaurants.getRestaurant_name());
+                    intent.putExtra(AppConstants.CGST, restaurants.getCgst());
+                    intent.putExtra(AppConstants.SGST, restaurants.getSgst());
+                    context.startActivity(intent);
+
+                    Gson gson = new Gson();
+                    String json = gson.toJson(restaurants);
+                    editor.putString(AppConstants.SELECTED_RESTAURANT_DETAILS, json);
+
+                    editor.putString(AppConstants.CGST,restaurants.getCgst());
+                    editor.putString(AppConstants.SGST,restaurants.getSgst());
+
+                    editor.apply();
+                }else {
+                    Toast.makeText(context, "User Address Not Found...Please click on Address Bar...", Toast.LENGTH_SHORT).show();
+                }
             }
         });
 

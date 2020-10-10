@@ -1,12 +1,18 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<ScrollView
+    xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/colorGray"
+    android:background="@color/white"
     android:orientation="vertical"
     tools:context=".view.setting.manageaddress.ManageAddressActivity">
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical">
 
     <androidx.appcompat.widget.AppCompatTextView
         android:id="@+id/tv_no_user_address"
@@ -32,6 +38,8 @@
             android:layout_margin="4dp"
             android:paddingBottom="8dp" />
 
+    </androidx.cardview.widget.CardView>
+
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fb_add_user_address"
             android:layout_width="wrap_content"
@@ -42,5 +50,6 @@
             app:borderWidth="0dp"
             app:elevation="8dp"
             app:fabSize="mini" />
-    </androidx.cardview.widget.CardView>
-</LinearLayout>
+
+    </LinearLayout>
+</ScrollView>

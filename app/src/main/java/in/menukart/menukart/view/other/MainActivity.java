@@ -3,23 +3,30 @@ package in.menukart.menukart.view.other;
 import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
 import android.content.SharedPreferences;
+import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
-import android.graphics.Color;
+import android.content.pm.Signature;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
+import android.net.wifi.WifiManager;
 import android.os.Bundle;
+import android.os.Handler;
 import android.text.TextUtils;
+import android.text.format.Formatter;
+import android.util.Base64;
+import android.util.Log;
 import android.view.MenuItem;
 import android.view.View;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.AppCompatTextView;
 import androidx.appcompat.widget.Toolbar;
@@ -28,16 +35,32 @@ import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentManager;
 import androidx.fragment.app.FragmentTransaction;
 
+import com.google.android.gms.common.ConnectionResult;
+import com.google.android.gms.common.api.GoogleApiClient;
+import com.google.android.gms.common.api.PendingResult;
+import com.google.android.gms.common.api.ResultCallback;
+import com.google.android.gms.common.api.Status;
 import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationRequest;
 import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResult;
+import com.google.android.gms.location.LocationSettingsStates;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
 import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.google.gson.Gson;
 import com.nex3z.notificationbadge.NotificationBadge;
+import com.squareup.okhttp.Call;
+import com.squareup.okhttp.Callback;
+import com.squareup.okhttp.OkHttpClient;
+import com.squareup.okhttp.Request;
+import com.squareup.okhttp.Response;
 
 import java.io.IOException;
-import java.io.Serializable;
+import java.security.MessageDigest;
+import java.security.NoSuchAlgorithmException;
 import java.util.List;
 import java.util.Locale;
 
@@ -47,12 +70,17 @@ import in.menukart.menukart.entities.foodcart.UserDetails;
 import in.menukart.menukart.util.AppConstants;
 import in.menukart.menukart.view.explore.ExploreFragment;
 import in.menukart.menukart.view.foodcart.cart.FoodCartActivity;
-import in.menukart.menukart.view.order.menu.MenuActivity;
 import in.menukart.menukart.view.order.orderlist.OrdersFragment;
 import in.menukart.menukart.view.setting.SettingsFragment;
 
+import android.location.LocationListener;
+import android.location.LocationManager;
 
-public class MainActivity extends AppCompatActivity {
+import org.json.JSONException;
+import org.json.JSONObject;
+
+
+public class MainActivity extends AppCompatActivity implements GoogleApiClient.ConnectionCallbacks, GoogleApiClient.OnConnectionFailedListener{
 
     private static final int REQUEST_CODE = 101;
     BottomNavigationView bottomNavigationView;
@@ -70,6 +98,11 @@ public class MainActivity extends AppCompatActivity {
     NotificationBadge notificationBadge;
     private int cartItemCounts = 0;
 
+    int REQUEST_CHECK_SETTINGS = 100;
+
+    LocationManager service;
+    boolean enabled;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -77,6 +110,35 @@ public class MainActivity extends AppCompatActivity {
 
         setCustomToolbar();
         initHomeViews();
+
+        service = (LocationManager) getSystemService(LOCATION_SERVICE);
+        enabled = service.isProviderEnabled(LocationManager.GPS_PROVIDER);
+
+        if (!enabled) {
+            EnableGPSAutoMatically();
+        }
+
+        WifiManager wifiManager = (WifiManager) getApplicationContext().getSystemService(WIFI_SERVICE);
+        String ipAddress = Formatter.formatIpAddress(wifiManager.getConnectionInfo().getIpAddress());
+        Log.d("ip Address",ipAddress);
+
+
+
+
+       /* try {
+            PackageInfo info = getPackageManager().getPackageInfo(
+                    "in.menukart.menukart",
+                    PackageManager.GET_SIGNATURES);
+            for (Signature signature : info.signatures) {
+                MessageDigest md = MessageDigest.getInstance("SHA");
+                md.update(signature.toByteArray());
+                Log.d("KeyHash:", Base64.encodeToString(md.digest(), Base64.DEFAULT));
+            }
+        }
+        catch (PackageManager.NameNotFoundException e) {
+        }
+        catch (NoSuchAlgorithmException e) {
+        }*/
 
     }
 
@@ -98,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
         linearLayoutOther = toolbarHome.findViewById(R.id.ll_toolbar_other);
         mImgCartIcon = findViewById(R.id.ic_cart);
 
-        notificationBadge=findViewById(R.id.badge);
+        notificationBadge = findViewById(R.id.badge);
         actions();
     }
 
@@ -106,19 +168,38 @@ public class MainActivity extends AppCompatActivity {
         mImgCartIcon.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                navigateToCartScreen();
+
+                if (tvLocationName.getText().toString().isEmpty()){
+                    Toast.makeText(context, "Please Enable your location...", Toast.LENGTH_SHORT).show();
+                }else {
+                    navigateToCartScreen();
+                }
+
             }
         });
         notificationBadge.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                navigateToCartScreen();
+                if (tvLocationName.getText().toString().isEmpty()){
+                    Toast.makeText(context, "Please Enable your location...", Toast.LENGTH_SHORT).show();
+
+                }else {
+                    navigateToCartScreen();
+                }
+            }
+        });
+
+        tvLocationName.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                fetchLocation();
+
             }
         });
     }
 
-    private void navigateToCartScreen(){
-        if(cartItemCounts == 0){
+    private void navigateToCartScreen() {
+        if (cartItemCounts == 0) {
             /*Toast toast = Toast.makeText(context, "Cart is empty, " +
                     "Please add something.", Toast.LENGTH_SHORT);
             toast.getView().setBackgroundColor(getResources().getColor(R.color.shadow));
@@ -150,6 +231,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     private void fetchLocation() {
+
         if (ActivityCompat.checkSelfPermission(
                 this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(
                 this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
@@ -163,7 +245,7 @@ public class MainActivity extends AppCompatActivity {
                 if (location != null) {
                     currentLocation = location;
                     //Toast.makeText(getApplicationContext(), currentLocation.getLatitude() + "" + currentLocation.getLongitude(), Toast.LENGTH_SHORT).show();
-                    getUserCurrentAddress(currentLocation.getLatitude(),currentLocation.getLongitude());
+                    getUserCurrentAddress(currentLocation.getLatitude(), currentLocation.getLongitude());
                 }
             }
         });
@@ -216,7 +298,7 @@ public class MainActivity extends AppCompatActivity {
         transaction.commit();
     }
 
-    private void getUserCurrentAddress(double latitude,double longitude) {
+    private void getUserCurrentAddress(double latitude, double longitude) {
         Geocoder geocoder;
         List<Address> addresses;
         geocoder = new Geocoder(this, Locale.getDefault());
@@ -242,8 +324,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
         }
-
-
     }
 
 
@@ -285,8 +365,79 @@ public class MainActivity extends AppCompatActivity {
         super.onResume();
         cartItemCounts = MenuKartDatabase.getDatabase(context)
                 .menuKartDao().getAllAddedItems().size();
-        notificationBadge.setText(""+cartItemCounts);
+        notificationBadge.setText("" + cartItemCounts);
         notificationBadge.setVisibility(cartItemCounts == 0 ? View.INVISIBLE : View.VISIBLE);
 
     }
+
+    private void EnableGPSAutoMatically() {
+        GoogleApiClient googleApiClient = null;
+        if (googleApiClient == null) {
+            googleApiClient = new GoogleApiClient.Builder(this)
+                    .addApi(LocationServices.API).addConnectionCallbacks(this)
+                    .addOnConnectionFailedListener(this).build();
+            googleApiClient.connect();
+            LocationRequest locationRequest = LocationRequest.create();
+            locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+            locationRequest.setInterval(30 * 1000);
+            locationRequest.setFastestInterval(5 * 1000);
+            LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                    .addLocationRequest(locationRequest);
+
+            // **************************
+            builder.setAlwaysShow(true); // this is the key ingredient
+            // **************************
+
+            PendingResult<LocationSettingsResult> result = LocationServices.SettingsApi
+                    .checkLocationSettings(googleApiClient, builder.build());
+            result.setResultCallback(new ResultCallback<LocationSettingsResult>() {
+                @Override
+                public void onResult(LocationSettingsResult result) {
+                    final Status status = result.getStatus();
+                    final LocationSettingsStates state = result.getLocationSettingsStates();
+                    switch (status.getStatusCode()) {
+                        case LocationSettingsStatusCodes.SUCCESS:
+                            break;
+                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+
+                            try {
+
+                                status.startResolutionForResult(MainActivity.this, REQUEST_CHECK_SETTINGS);
+
+                                LocationRequest mLocationRequest = LocationRequest.create();
+                                mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+
+                                fetchLocation();
+
+
+                            } catch (IntentSender.SendIntentException e) {
+                                // Ignore the error.
+                            }
+                            break;
+                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+
+                            break;
+                    }
+                }
+            });
+        }
+    }
+
+    @Override
+    public void onConnected(@Nullable Bundle bundle) {
+
+        fetchLocation();
+
+    }
+
+    @Override
+    public void onConnectionSuspended(int i) {
+
+    }
+
+    @Override
+    public void onConnectionFailed(@NonNull ConnectionResult connectionResult) {
+
+    }
+
 }
